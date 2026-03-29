@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    jboss-web.xml — WildFly-spezifischer Deployment Descriptor.
+
+    Setzt den Context Root der Anwendung.
+    Ohne diese Datei: Context Root = WAR-Dateiname (z.B. /ex01-rest-crud)
+    Mit dieser Datei: Context Root = was hier steht (z.B. /books-api)
+
+    Nur relevant für WildFly/JBoss. In standalone.xml kann man das auch
+    serverseitig konfigurieren.
+-->
+<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee">
+    <context-root>/books-api</context-root>
+</jboss-web>
