@@ -16,35 +16,47 @@ public class BookStore {
 
     @PostConstruct
     void init() {
-        // TODO: Füge 3-5 Beispiel-Bücher hinzu mit save()
-        // Beispiel: save(new Book(0, "Clean Code", "Robert C. Martin", "978-0132350884", 34.99));
+        save(new Book(0, "Clean Code", "Robert C. Martin", "978-0132350884", 34.99));
+        save(new Book(0, "Effective Java", "Joshua Bloch", "978-0134685991", 42.50));
+        save(new Book(0, "Head First Design Patterns", "Eric Freeman", "978-0596007126", 39.99));
+        save(new Book(0, "Java Concurrency in Practice", "Brian Goetz", "978-0321349606", 45.00));
+        save(new Book(0, "Refactoring", "Martin Fowler", "978-0134757599", 47.99));
     }
 
     public List<Book> findAll() {
-        // TODO: Alle Bücher als unveränderliche Kopie zurückgeben
-        return List.of();
+        return List.copyOf(books);
     }
 
     public Optional<Book> findById(long id) {
-        // TODO: Buch mit der gegebenen ID suchen und zurückgeben
-        return Optional.empty();
+        return books.stream()
+                .filter(b -> b.id() == id)
+                .findFirst();
     }
 
     public Book save(Book book) {
-        // TODO: Neues Buch mit auto-generierter ID erstellen und zur Liste hinzufügen
-        // Hinweis: idCounter.incrementAndGet() für die nächste ID
-        return book;
+        Book created = new Book(
+                idCounter.incrementAndGet(),
+                book.title(),
+                book.author(),
+                book.isbn(),
+                book.price()
+        );
+        books.add(created);
+        return created;
     }
 
     public Optional<Book> update(long id, Book book) {
-        // TODO: Buch mit der ID finden und mit neuen Daten ersetzen
-        // Rückgabe: Optional.of(updated) wenn gefunden, Optional.empty() wenn nicht
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).id() == id) {
+                Book updated = new Book(id, book.title(), book.author(), book.isbn(), book.price());
+                books.set(i, updated);
+                return Optional.of(updated);
+            }
+        }
         return Optional.empty();
     }
 
     public boolean delete(long id) {
-        // TODO: Buch mit der ID löschen
-        // Rückgabe: true wenn gelöscht, false wenn nicht gefunden
-        return false;
+        return books.removeIf(b -> b.id() == id);
     }
 }

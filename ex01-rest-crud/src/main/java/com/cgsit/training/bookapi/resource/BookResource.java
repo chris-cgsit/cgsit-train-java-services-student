@@ -17,46 +17,42 @@ public class BookResource {
     @Inject
     BookStore store;
 
-    // TODO: GET /api/books — Alle Bücher zurückgeben
-    //
-    // Hinweise:
-    // - @GET Annotation
-    // - Rückgabetyp: List<Book>
-    // - Rufe store.findAll() auf
+    @GET
+    public List<Book> getAll() {
+        return store.findAll();
+    }
 
+    @GET
+    @Path("/{id}")
+    public Response getById(@PathParam("id") long id) {
+        return store.findById(id)
+                .map(b -> Response.ok(b).build())
+                .orElse(Response.status(Status.NOT_FOUND).build());
+    }
 
-    // TODO: GET /api/books/{id} — Ein Buch nach ID
-    //
-    // Hinweise:
-    // - @GET + @Path("/{id}")
-    // - @PathParam("id") long id
-    // - Rückgabetyp: Response
-    // - Gefunden → Response.ok(book).build()
-    // - Nicht gefunden → Response.status(Status.NOT_FOUND).build()
+    @POST
+    public Response create(Book book) {
+        Book created = store.save(book);
+        return Response
+                .status(Status.CREATED)
+                .entity(created)
+                .build();
+    }
 
+    @PUT
+    @Path("/{id}")
+    public Response update(@PathParam("id") long id, Book book) {
+        return store.update(id, book)
+                .map(b -> Response.ok(b).build())
+                .orElse(Response.status(Status.NOT_FOUND).build());
+    }
 
-    // TODO: POST /api/books — Neues Buch erstellen
-    //
-    // Hinweise:
-    // - @POST Annotation
-    // - Parameter: Book book (wird aus JSON deserialisiert)
-    // - Rückgabe: Response.status(Status.CREATED).entity(created).build()
-
-
-    // TODO: PUT /api/books/{id} — Buch aktualisieren
-    //
-    // Hinweise:
-    // - @PUT + @Path("/{id}")
-    // - Parameter: @PathParam("id") long id, Book book
-    // - Gefunden → Response.ok(updated).build()
-    // - Nicht gefunden → Response.status(Status.NOT_FOUND).build()
-
-
-    // TODO: DELETE /api/books/{id} — Buch löschen
-    //
-    // Hinweise:
-    // - @DELETE + @Path("/{id}")
-    // - Gelöscht → Response.noContent().build()  (204)
-    // - Nicht gefunden → Response.status(Status.NOT_FOUND).build()
-
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") long id) {
+        if (store.delete(id)) {
+            return Response.noContent().build();
+        }
+        return Response.status(Status.NOT_FOUND).build();
+    }
 }
