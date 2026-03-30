@@ -51,15 +51,8 @@
                 <version>5.1.2.Final</version>
                 <configuration>
                     <jboss-home>${wildfly.home}</jboss-home>
-                    <!-- Workaround: Windows file-lock bug in wildfly:dev.
-                         Static web resources (HTML/CSS/JS) are ignored by the watcher,
-                         so war:exploded does not try to overwrite locked files.
-                         Java class changes still trigger hot-reload normally. -->
-                    <ignorePatterns>
-                        <ignorePattern>.*\.html$</ignorePattern>
-                        <ignorePattern>.*\.css$</ignorePattern>
-                        <ignorePattern>.*\.js$</ignorePattern>
-                    </ignorePatterns>
+                    <!-- Fix: Windows file-lock bug in wildfly:dev -->
+                    <dev-webapp-directory>target/service-layer-demo</dev-webapp-directory>
                 </configuration>
             </plugin>
         </plugins>
