@@ -1,0 +1,104 @@
+### ===========================================
+### Book API — HTTP Tests (IntelliJ HTTP Client)
+###
+### Defaults unten funktionieren sofort ohne Umgebungswahl.
+### Für andere Werte: http-client.env.json anpassen
+### und oben rechts "dev" Umgebung wählen (überschreibt Defaults).
+### ===========================================
+
+### Default-Variablen (greifen immer, env.json überschreibt sie)
+@host = http://localhost:8080
+@app = ex01-rest-crud
+
+### Alle Bücher abrufen
+GET {{host}}/{{app}}/api/books
+Accept: application/json
+
+### Ein Buch nach ID abrufen
+GET {{host}}/{{app}}/api/books/1
+Accept: application/json
+
+### Buch nicht gefunden (404)
+GET {{host}}/{{app}}/api/books/999
+Accept: application/json
+
+### Neues Buch erstellen
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "David Thomas",
+  "isbn": "978-0135957059",
+  "price": 49.99
+}
+
+### Noch ein Buch erstellen
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Design Patterns",
+  "author": "Gang of Four",
+  "isbn": "978-0201633610",
+  "price": 44.99
+}
+
+### Buch aktualisieren (ID 1)
+PUT {{host}}/{{app}}/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Clean Code (2nd Edition)",
+  "author": "Robert C. Martin",
+  "isbn": "978-0132350884",
+  "price": 39.99
+}
+
+### Buch aktualisieren — nicht gefunden (404)
+PUT {{host}}/{{app}}/api/books/999
+Content-Type: application/json
+
+{
+  "title": "Ghost Book",
+  "author": "Nobody",
+  "isbn": "000-0000000000",
+  "price": 0.01
+}
+
+### Buch löschen (ID 2)
+DELETE {{host}}/{{app}}/api/books/2
+
+### Buch nochmal löschen — nicht gefunden (404)
+DELETE {{host}}/{{app}}/api/books/2
+
+### Prüfen ob gelöscht — sollte 404 sein
+GET {{host}}/{{app}}/api/books/2
+Accept: application/json
+
+### Alle Bücher nach dem Test
+GET {{host}}/{{app}}/api/books
+Accept: application/json
+
+### ===========================================
+### Beispiel mit Response-Test (Assertion)
+### ===========================================
+
+### GET alle Bücher — mit automatischer Prüfung
+GET {{host}}/{{app}}/api/books
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function() {
+        client.assert(response.status === 200, "Expected 200, got " + response.status);
+    });
+    client.test("Response ist ein Array", function() {
+        client.assert(Array.isArray(response.body), "Expected array");
+    });
+    client.test("Mindestens 1 Buch vorhanden", function() {
+        client.assert(response.body.length > 0, "Keine Bücher gefunden");
+    });
+    client.test("Erstes Buch hat einen Titel", function() {
+        client.assert(response.body[0].title.length > 0, "Titel ist leer");
+    });
+%}
