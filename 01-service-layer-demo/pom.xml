@@ -40,6 +40,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+                <configuration>
+                    <!-- Avoid exploded WAR dir that conflicts with wildfly:dev on Windows -->
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
@@ -47,6 +51,15 @@
                 <version>5.1.2.Final</version>
                 <configuration>
                     <jboss-home>${wildfly.home}</jboss-home>
+                    <!-- Workaround: Windows file-lock bug in wildfly:dev.
+                         Static web resources (HTML/CSS/JS) are ignored by the watcher,
+                         so war:exploded does not try to overwrite locked files.
+                         Java class changes still trigger hot-reload normally. -->
+                    <ignorePatterns>
+                        <ignorePattern>.*\.html$</ignorePattern>
+                        <ignorePattern>.*\.css$</ignorePattern>
+                        <ignorePattern>.*\.js$</ignorePattern>
+                    </ignorePatterns>
                 </configuration>
             </plugin>
         </plugins>
