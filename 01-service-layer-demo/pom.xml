@@ -4,15 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.cgsit.training</groupId>
-        <artifactId>java-services-examples</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>com.cgsit.training</groupId>
     <artifactId>service-layer-demo</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
+
     <name>Day 1 — Service Layer Architecture</name>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jakarta.ee.version>10.0.0</jakarta.ee.version>
+        <wildfly.home>${env.JBOSS_HOME}</wildfly.home>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -21,18 +26,28 @@
             <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
         <finalName>service-layer-demo</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>5.1.2.Final</version>
+                <configuration>
+                    <jboss-home>${wildfly.home}</jboss-home>
+                </configuration>
             </plugin>
         </plugins>
     </build>
