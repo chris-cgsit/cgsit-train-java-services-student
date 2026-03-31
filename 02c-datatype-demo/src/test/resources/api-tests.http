@@ -1,0 +1,77 @@
+### ===========================================
+### Data Type Mapping Demo — HTTP Tests
+### ===========================================
+
+@host = http://localhost:8080
+@app = datatype-demo
+
+### Alle Datentypen als JSON
+GET {{host}}/{{app}}/api/types
+Accept: application/json
+
+### Beispiel-Rechnung (Praxisbeispiel mit allen Typen)
+GET {{host}}/{{app}}/api/invoices/sample
+Accept: application/json
+
+### double vs BigDecimal — Rundungsfehler Demo
+GET {{host}}/{{app}}/api/invoices/precision-test
+Accept: application/json
+
+### Round-Trip Test: TypeShowcase senden und zurückbekommen
+POST {{host}}/{{app}}/api/types
+Content-Type: application/json
+
+{
+  "byteValue": 127,
+  "shortValue": 32000,
+  "intValue": 42,
+  "longValue": 9000000001,
+  "floatValue": 3.14,
+  "doubleValue": 3.141592653589793,
+  "booleanValue": true,
+  "charValue": "A",
+  "bigDecimalValue": 19999.99,
+  "bigIntegerValue": 123456789012345678901234567890,
+  "stringValue": "Hallo Welt",
+  "uuidValue": "550e8400-e29b-41d4-a716-446655440000",
+  "localDate": "2026-03-31",
+  "localTime": "14:30:00",
+  "localDateTime": "2026-03-31T14:30:00",
+  "offsetDateTime": "2026-03-31T14:30:00+02:00",
+  "instant": "2026-03-31T12:30:00Z",
+  "duration": "PT1H30M",
+  "stringList": ["Wien", "Graz", "Linz"],
+  "intList": [1, 2, 3, 5, 8, 13],
+  "stringMap": {"sprache": "Deutsch", "land": "Österreich"},
+  "mixedMap": {"name": "Max", "alter": 30, "aktiv": true},
+  "nullableValue": null
+}
+
+### Round-Trip Test: Rechnung senden
+POST {{host}}/{{app}}/api/invoices
+Content-Type: application/json
+
+{
+  "id": 2002,
+  "customerId": 42,
+  "customerName": "Anna Beispiel",
+  "email": "anna@example.com",
+  "netAmountDouble": 500.00,
+  "netAmount": 500.00,
+  "taxRate": 20.0,
+  "grossAmount": 600.00,
+  "paid": true,
+  "invoiceDate": "2026-03-31",
+  "dueDate": "2026-04-15",
+  "createdTime": "09:00:00",
+  "lastModified": "2026-03-31T10:15:30",
+  "status": "PAID",
+  "items": [
+    {"position": 1, "description": "Beratung", "quantity": 5, "unitPrice": 100.00, "totalPrice": 500.00}
+  ],
+  "metadata": {"projekt": "Java Training"}
+}
+
+### OpenAPI Spec — zeigt die Schema-Typen
+GET {{host}}/openapi?format=JSON
+Accept: application/json
