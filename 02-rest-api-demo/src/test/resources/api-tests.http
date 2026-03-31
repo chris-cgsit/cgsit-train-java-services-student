@@ -1,0 +1,62 @@
+### ===========================================
+### Product API — HTTP Tests (IntelliJ HTTP Client)
+###
+### Konfiguration: http-client.env.json (Projektroot)
+### Umgebung wählen: oben rechts "dev" auswählen
+### ===========================================
+
+### Alle Produkte
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+### Produkte filtern nach Kategorie
+GET {{host}}/{{app}}/api/products?category=Electronics
+Accept: application/json
+
+### Ein Produkt nach ID
+GET {{host}}/{{app}}/api/products/1
+Accept: application/json
+
+### Produkt nicht gefunden (404)
+GET {{host}}/{{app}}/api/products/999
+Accept: application/json
+
+### Neues Produkt erstellen
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Maus",
+  "price": 29.99,
+  "category": "Peripherie"
+}
+
+### Produkt aktualisieren
+PUT {{host}}/{{app}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Laptop Pro Max",
+  "price": 1499.99,
+  "category": "Electronics"
+}
+
+### Produkt löschen
+DELETE {{host}}/{{app}}/api/products/1
+
+### OpenAPI Dokument (JSON)
+GET {{host}}/openapi?format=JSON
+Accept: application/json
+
+### Alle Produkte — mit Assertion
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+> {%
+    client.test("Status ist 200", function() {
+        client.assert(response.status === 200, "Expected 200");
+    });
+    client.test("Produkte vorhanden", function() {
+        client.assert(response.body.length > 0, "Keine Produkte");
+    });
+%}
