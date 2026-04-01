@@ -1,0 +1,172 @@
+### ===========================================
+### Error Handling Demo — HTTP Tests
+###
+### Demonstrates ExceptionMapper responses:
+###   - ServiceExceptionMapper   → custom business errors (404, 409)
+###   - ConstraintViolationMapper → validation errors (400)
+###   - CatchAllExceptionMapper  → unhandled errors (500)
+### ===========================================
+
+@host = http://localhost:8080
+@app = error-handling-demo
+
+### ===========================================
+### HAPPY PATH: Erfolgreiche Requests
+### ===========================================
+
+### Alle Produkte auflisten (5 Beispiel-Produkte)
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+### Einzelnes Produkt abrufen
+GET {{host}}/{{app}}/api/products/1
+Accept: application/json
+
+### Neues Produkt anlegen — 201 Created
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Ergonomic Mouse",
+  "price": 49.99,
+  "category": "Peripherie"
+}
+
+### Produkt aktualisieren — 200 OK
+PUT {{host}}/{{app}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Premium Mechanical Keyboard",
+  "price": 129.99,
+  "category": "Peripherie"
+}
+
+### Produkt löschen — 204 No Content
+DELETE {{host}}/{{app}}/api/products/5
+
+### ===========================================
+### 404: ProductNotFoundException
+### → ServiceExceptionMapper liefert JSON ErrorResponse
+### ===========================================
+
+### Produkt nicht vorhanden — 404 mit JSON Body
+GET {{host}}/{{app}}/api/products/999
+Accept: application/json
+
+### Update auf nicht existierendes Produkt — 404
+PUT {{host}}/{{app}}/api/products/999
+Content-Type: application/json
+
+{
+  "name": "Ghost Product",
+  "price": 10.00,
+  "category": "Books"
+}
+
+### Delete auf nicht existierendes Produkt — 404
+DELETE {{host}}/{{app}}/api/products/999
+
+### ===========================================
+### 409: DuplicateProductException
+### → ServiceExceptionMapper liefert Conflict
+### ===========================================
+
+### Doppeltes Produkt anlegen — 409 Conflict
+### ("Mechanical Keyboard" existiert bereits)
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Mechanical Keyboard",
+  "price": 79.99,
+  "category": "Peripherie"
+}
+
+### ===========================================
+### 400: ConstraintViolationException
+### → ConstraintViolationMapper liefert Feldliste
+### ===========================================
+
+### Leerer Name — @NotBlank verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": 29.99,
+  "category": "Electronics"
+}
+
+### Negativer Preis — @Positive verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Bad Product",
+  "price": -10.00,
+  "category": "Software"
+}
+
+### Fehlender Preis (null) — @NotNull verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "No Price Product",
+  "category": "Books"
+}
+
+### Mehrere Fehler gleichzeitig — alle Violations in einer Response
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -5.00,
+  "category": ""
+}
+
+### Name zu lang (>100 Zeichen) — @Size verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "price": 10.00,
+  "category": "Books"
+}
+
+### ===========================================
+### Vergleich: Error Response Formate
+### ===========================================
+
+### ServiceException → ErrorResponse { status, title, detail, timestamp }
+### Erwartet:
+### {
+###   "status": 404,
+###   "title": "Not Found",
+###   "detail": "Product with id 999 not found",
+###   "timestamp": "2026-04-01T..."
+### }
+GET {{host}}/{{app}}/api/products/999
+Accept: application/json
+
+### ConstraintViolation → { status, title, violations: [ { field, message } ] }
+### Erwartet:
+### {
+###   "status": 400,
+###   "title": "Validation Error",
+###   "violations": [
+###     { "field": "name", "message": "Name darf nicht leer sein" },
+###     { "field": "price", "message": "Preis muss positiv sein" }
+###   ]
+### }
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -1,
+  "category": ""
+}
