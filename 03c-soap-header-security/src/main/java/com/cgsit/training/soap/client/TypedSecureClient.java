@@ -52,14 +52,28 @@ public class TypedSecureClient {
         int product = calculator.multiply(6, 7);
         System.out.println("  multiply(6, 7)   = " + product);
 
+        // 5. divide() requires "admin" role — "training-key-2025" has role "user"
+        //    → server returns SOAP Fault (Access denied)
+        System.out.println();
+        System.out.println("--- divide with 'user' role (access denied) ---");
+        try {
+            calculator.divide(100, 3);
+        } catch (jakarta.xml.ws.soap.SOAPFaultException e) {
+            System.out.println("  SOAP Fault: " + e.getMessage());
+        }
+
+        // 6. Switch to admin key and retry
+        System.out.println();
+        System.out.println("--- divide with 'admin' role ---");
+        chain.clear();
+        chain.add(new ClientHeaderHandler("admin-key-2025"));
+        binding.setHandlerChain(chain);
+
         double quotient = calculator.divide(100, 3);
         System.out.println("  divide(100, 3)   = " + quotient);
 
         System.out.println();
         System.out.println("=== Done ===");
-        System.out.println();
-        System.out.println("The headers (apiKey, correlationId) were injected");
-        System.out.println("by the ClientHeaderHandler — invisible to the caller.");
     }
 
     /**
