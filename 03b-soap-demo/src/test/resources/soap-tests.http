@@ -1,0 +1,69 @@
+### ===========================================
+### Calculator SOAP Service — HTTP Tests
+###
+### SOAP Requests werden als POST mit XML Body gesendet.
+### Voraussetzung: WildFly läuft mit cdi-demo deployed.
+### ===========================================
+
+@host = http://localhost:8080
+@app = soap-demo
+
+### WSDL abrufen (im Browser oder hier)
+GET {{host}}/{{app}}/CalculatorService?wsdl
+Accept: text/xml
+
+### Addition: 10 + 20
+POST {{host}}/{{app}}/CalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="http://soap.training.cgsit.com/">
+    <soap:Body>
+        <calc:add>
+            <a>10</a>
+            <b>20</b>
+        </calc:add>
+    </soap:Body>
+</soap:Envelope>
+
+### Multiplikation: 6 × 7
+POST {{host}}/{{app}}/CalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="http://soap.training.cgsit.com/">
+    <soap:Body>
+        <calc:multiply>
+            <a>6</a>
+            <b>7</b>
+        </calc:multiply>
+    </soap:Body>
+</soap:Envelope>
+
+### Division: 100 / 3
+POST {{host}}/{{app}}/CalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="http://soap.training.cgsit.com/">
+    <soap:Body>
+        <calc:divide>
+            <a>100</a>
+            <b>3</b>
+        </calc:divide>
+    </soap:Body>
+</soap:Envelope>
+
+### Division durch 0 — Fehler
+POST {{host}}/{{app}}/CalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="http://soap.training.cgsit.com/">
+    <soap:Body>
+        <calc:divide>
+            <a>42</a>
+            <b>0</b>
+        </calc:divide>
+    </soap:Body>
+</soap:Envelope>

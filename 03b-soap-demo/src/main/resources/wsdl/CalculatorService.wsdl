@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    CalculatorService WSDL — offline Kopie.
+
+    Im Kurs: WildFly starten, http://localhost:8080/soap-demo/CalculatorService?wsdl
+    im Browser öffnen, und diese Datei vergleichen.
+
+    Für die Client-Generierung brauchen wir die WSDL als Datei,
+    damit Maven auch ohne laufenden Server bauen kann.
+-->
+<definitions name="CalculatorService"
+             targetNamespace="http://soap.training.cgsit.com/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://soap.training.cgsit.com/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <types>
+        <xsd:schema targetNamespace="http://soap.training.cgsit.com/">
+            <!-- add -->
+            <xsd:element name="add" type="tns:add"/>
+            <xsd:complexType name="add">
+                <xsd:sequence>
+                    <xsd:element name="a" type="xsd:int"/>
+                    <xsd:element name="b" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="addResponse" type="tns:addResponse"/>
+            <xsd:complexType name="addResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- multiply -->
+            <xsd:element name="multiply" type="tns:multiply"/>
+            <xsd:complexType name="multiply">
+                <xsd:sequence>
+                    <xsd:element name="a" type="xsd:int"/>
+                    <xsd:element name="b" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="multiplyResponse" type="tns:multiplyResponse"/>
+            <xsd:complexType name="multiplyResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- divide -->
+            <xsd:element name="divide" type="tns:divide"/>
+            <xsd:complexType name="divide">
+                <xsd:sequence>
+                    <xsd:element name="a" type="xsd:double"/>
+                    <xsd:element name="b" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="divideResponse" type="tns:divideResponse"/>
+            <xsd:complexType name="divideResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+
+    <message name="addRequest"><part name="parameters" element="tns:add"/></message>
+    <message name="addResponse"><part name="parameters" element="tns:addResponse"/></message>
+    <message name="multiplyRequest"><part name="parameters" element="tns:multiply"/></message>
+    <message name="multiplyResponse"><part name="parameters" element="tns:multiplyResponse"/></message>
+    <message name="divideRequest"><part name="parameters" element="tns:divide"/></message>
+    <message name="divideResponse"><part name="parameters" element="tns:divideResponse"/></message>
+
+    <portType name="CalculatorService">
+        <operation name="add">
+            <input message="tns:addRequest"/>
+            <output message="tns:addResponse"/>
+        </operation>
+        <operation name="multiply">
+            <input message="tns:multiplyRequest"/>
+            <output message="tns:multiplyResponse"/>
+        </operation>
+        <operation name="divide">
+            <input message="tns:divideRequest"/>
+            <output message="tns:divideResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="CalculatorServiceBinding" type="tns:CalculatorService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="add">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+        <operation name="multiply">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+        <operation name="divide">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+
+    <service name="CalculatorService">
+        <port name="CalculatorServicePort" binding="tns:CalculatorServiceBinding">
+            <soap:address location="http://localhost:8080/soap-demo/CalculatorService"/>
+        </port>
+    </service>
+</definitions>
