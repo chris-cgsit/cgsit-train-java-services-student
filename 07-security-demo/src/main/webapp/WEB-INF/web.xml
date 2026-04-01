@@ -15,6 +15,16 @@
              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
+    <!--
+        Enable @RolesAllowed on JAX-RS resources.
+        Without this, RESTEasy ignores the annotations and only
+        the web.xml auth-constraint is checked (which allows both roles).
+    -->
+    <context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- Protect /api/secured/* — authentication required -->
     <security-constraint>
         <web-resource-collection>
