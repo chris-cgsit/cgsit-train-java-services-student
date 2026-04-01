@@ -1,13 +1,18 @@
 package com.cgsit.training.validation.resource;
 
+import com.cgsit.training.validation.constraint.ValidCategory;
 import com.cgsit.training.validation.data.ProductStore;
 import com.cgsit.training.validation.model.Product;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.math.BigDecimal;
 import java.util.List;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -31,14 +36,51 @@ public class ProductResource {
         return store.findAll();
     }
 
+    // Bean Validation on @QueryParam — validates BEFORE method executes.
+    // GET /api/products/search?name=Key&category=Electronics&minPrice=10&maxPrice=500
+    @GET
+    @Path("/search")
+    @Operation(summary = "Search products (validated query parameters)")
+    @APIResponse(responseCode = "200", description = "Matching products")
+    @APIResponse(responseCode = "400", description = "Invalid search parameters")
+    public List<Product> search(
+
+            @Parameter(description = "Name filter (min 2 chars)", example = "Key")
+            @QueryParam("name")
+            @Size(min = 2, max = 50, message = "Suchbegriff muss zwischen 2 und 50 Zeichen lang sein")
+            String name,
+
+            @Parameter(description = "Category filter", example = "Electronics")
+            @QueryParam("category")
+            @ValidCategory
+            String category,
+
+            @Parameter(description = "Minimum price", example = "10")
+            @QueryParam("minPrice")
+            @Positive(message = "Mindestpreis muss positiv sein")
+            BigDecimal minPrice,
+
+            @Parameter(description = "Maximum price", example = "500")
+            @QueryParam("maxPrice")
+            @Positive(message = "Maximalpreis muss positiv sein")
+            BigDecimal maxPrice) {
+
+        return store.findAll().stream()
+                .filter(p -> name == null || p.name().toLowerCase().contains(name.toLowerCase()))
+                .filter(p -> category == null || category.equals(p.category()))
+                .filter(p -> minPrice == null || p.price().compareTo(minPrice) >= 0)
+                .filter(p -> maxPrice == null || p.price().compareTo(maxPrice) <= 0)
+                .toList();
+    }
+
     @GET
     @Path("/{id}")
     @Operation(summary = "Get product by ID")
     @APIResponse(responseCode = "200", description = "Product found")
     @APIResponse(responseCode = "404", description = "Product not found")
     public Response getById(
-            @Parameter(description = "Product ID", example = "1")
-            @PathParam("id") long id) {
+            @Parameter(description = "Product ID (must be >= 1)", example = "1")
+            @PathParam("id") @Min(value = 1, message = "ID muss >= 1 sein") long id) {
         return store.findById(id)
                 .map(p -> Response.ok(p).build())
                 .orElse(Response.status(Status.NOT_FOUND).build());

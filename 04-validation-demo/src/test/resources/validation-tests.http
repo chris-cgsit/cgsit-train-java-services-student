@@ -22,6 +22,42 @@ Accept: application/json
 GET {{host}}/{{app}}/api/products/999
 Accept: application/json
 
+### Ungültige ID — @Min(1) verletzt auf @PathParam
+GET {{host}}/{{app}}/api/products/0
+Accept: application/json
+
+### ===========================================
+### SEARCH: Validierte Query-Parameter
+### ===========================================
+
+### Suche nach Name (min 2 Zeichen)
+GET {{host}}/{{app}}/api/products/search?name=Key
+Accept: application/json
+
+### Suche nach Kategorie
+GET {{host}}/{{app}}/api/products/search?category=Electronics
+Accept: application/json
+
+### Suche mit Preis-Range
+GET {{host}}/{{app}}/api/products/search?minPrice=30&maxPrice=100
+Accept: application/json
+
+### Suche kombiniert: Name + Kategorie + Preis
+GET {{host}}/{{app}}/api/products/search?name=Monitor&category=Electronics&minPrice=100
+Accept: application/json
+
+### INVALID: Name zu kurz (< 2 Zeichen) — @Size verletzt
+GET {{host}}/{{app}}/api/products/search?name=K
+Accept: application/json
+
+### INVALID: Negativer Mindestpreis — @Positive verletzt
+GET {{host}}/{{app}}/api/products/search?minPrice=-10
+Accept: application/json
+
+### INVALID: Ungültige Kategorie — @ValidCategory verletzt
+GET {{host}}/{{app}}/api/products/search?category=InvalidCat
+Accept: application/json
+
 ### ===========================================
 ### VALID: Neues Produkt anlegen — 201 Created
 ### ===========================================

@@ -32,10 +32,6 @@
             <version>4.0.2</version>
             <scope>provided</scope>
         </dependency>
-        <!--
-            Jackson Annotations — provided by WildFly 39 (RESTEasy Jackson Provider).
-            Needed at compile time for @JsonProperty, @JsonFormat, @JsonIgnore, etc.
-        -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
