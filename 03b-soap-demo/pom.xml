@@ -26,6 +26,18 @@
             <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--
+            JAX-WS Runtime — needed for standalone clients (main() methods).
+            On WildFly the server provides this, but when running
+            TypedCalculatorClient or CalculatorClient from IntelliJ
+            the JAX-WS classes must be on the classpath.
+        -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>
