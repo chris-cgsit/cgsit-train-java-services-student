@@ -1,0 +1,86 @@
+### ===========================================
+### Book API — HTTP Tests (IntelliJ HTTP Client)
+### ex04-error-handling: ExceptionMapper & strukturierte Fehlerantworten
+###
+### Defaults unten funktionieren sofort ohne Umgebungswahl.
+### Für andere Werte: http-client.env.json anpassen
+### und oben rechts "dev" Umgebung wählen (überschreibt Defaults).
+### ===========================================
+
+### Default-Variablen (greifen immer, env.json überschreibt sie)
+@host = http://localhost:8080
+@app = ex04-error-handling
+
+### Alle Bücher abrufen
+GET {{host}}/{{app}}/api/books
+Accept: application/json
+
+### Ein Buch nach ID abrufen
+GET {{host}}/{{app}}/api/books/1
+Accept: application/json
+
+### Buch nicht gefunden — 404 mit JSON-Fehlerstruktur (status/title/detail)
+GET {{host}}/{{app}}/api/books/999
+Accept: application/json
+
+### Neues Buch erstellen
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "David Thomas",
+  "isbn": "978-0135957059",
+  "price": 49.99
+}
+
+### Doppelte ISBN — 409 Conflict erwartet
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Another Book",
+  "author": "Another Author",
+  "isbn": "978-0135957059",
+  "price": 29.99
+}
+
+### Ungültiges Buch — 400 mit Validierungsfehlern (violations)
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "",
+  "isbn": "",
+  "price": -1.00
+}
+
+### Buch löschen — 204 No Content
+DELETE {{host}}/{{app}}/api/books/1
+
+### Buch nochmal löschen — 404 JSON-Fehler
+DELETE {{host}}/{{app}}/api/books/1
+
+### ===========================================
+### Beispiel mit Response-Test (Assertion)
+### ===========================================
+
+### GET nicht vorhandenes Buch — 404 Fehlerstruktur prüfen
+GET {{host}}/{{app}}/api/books/999
+Accept: application/json
+
+> {%
+    client.test("Status ist 404 Not Found", function() {
+        client.assert(response.status === 404, "Expected 404, got " + response.status);
+    });
+    client.test("Fehler enthält 'status' Feld", function() {
+        client.assert(response.body.status === 404, "Expected status 404 in body");
+    });
+    client.test("Fehler enthält 'title' Feld", function() {
+        client.assert(response.body.title !== undefined, "Feld 'title' fehlt");
+    });
+    client.test("Fehler enthält 'detail' Feld", function() {
+        client.assert(response.body.detail !== undefined, "Feld 'detail' fehlt");
+    });
+%}
