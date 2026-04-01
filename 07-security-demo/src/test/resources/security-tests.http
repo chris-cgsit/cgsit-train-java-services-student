@@ -1,0 +1,94 @@
+### ===========================================
+### Security Demo — HTTP Tests
+###
+### REST Security with Elytron + @RolesAllowed
+###
+### Users (add with add-user.bat/sh -a):
+###   alice / alice123  → role: user
+###   bob   / bob123    → role: user, admin
+###
+### Authorization header = Base64("user:password")
+###   alice:alice123 → YWxpY2U6YWxpY2UxMjM=
+###   bob:bob123     → Ym9iOmJvYjEyMw==
+### ===========================================
+
+@host = http://localhost:8080
+@app = security-demo
+
+### ===========================================
+### PUBLIC: No authentication required
+### ===========================================
+
+### Health check — @PermitAll, no auth needed
+GET {{host}}/{{app}}/api/public
+Accept: application/json
+
+### ===========================================
+### NO AUTH: Should return 401 Unauthorized
+### ===========================================
+
+### Secured endpoint without credentials — 401
+GET {{host}}/{{app}}/api/secured/whoami
+Accept: application/json
+
+### ===========================================
+### ALICE (role: user)
+### ===========================================
+
+### Who am I? — alice has role "user"
+GET {{host}}/{{app}}/api/secured/whoami
+Accept: application/json
+Authorization: Basic YWxpY2U6YWxpY2UxMjM=
+
+### User area — alice has "user" role → 200 OK
+GET {{host}}/{{app}}/api/secured/user-area
+Accept: application/json
+Authorization: Basic YWxpY2U6YWxpY2UxMjM=
+
+### Admin area — alice has NO "admin" role → 403 Forbidden
+GET {{host}}/{{app}}/api/secured/admin-area
+Accept: application/json
+Authorization: Basic YWxpY2U6YWxpY2UxMjM=
+
+### Dashboard — alice sees basic menu (no adminItems)
+GET {{host}}/{{app}}/api/secured/dashboard
+Accept: application/json
+Authorization: Basic YWxpY2U6YWxpY2UxMjM=
+
+### ===========================================
+### BOB (role: user + admin)
+### ===========================================
+
+### Who am I? — bob has roles "user" and "admin"
+GET {{host}}/{{app}}/api/secured/whoami
+Accept: application/json
+Authorization: Basic Ym9iOmJvYjEyMw==
+
+### User area — bob has "user" role → 200 OK
+GET {{host}}/{{app}}/api/secured/user-area
+Accept: application/json
+Authorization: Basic Ym9iOmJvYjEyMw==
+
+### Admin area — bob has "admin" role → 200 OK
+GET {{host}}/{{app}}/api/secured/admin-area
+Accept: application/json
+Authorization: Basic Ym9iOmJvYjEyMw==
+
+### Dashboard — bob sees basic + admin menu items
+GET {{host}}/{{app}}/api/secured/dashboard
+Accept: application/json
+Authorization: Basic Ym9iOmJvYjEyMw==
+
+### ===========================================
+### SPECIAL CASES
+### ===========================================
+
+### @DenyAll — always 403, even for admin
+GET {{host}}/{{app}}/api/secured/maintenance
+Accept: application/json
+Authorization: Basic Ym9iOmJvYjEyMw==
+
+### Wrong password — 401 Unauthorized
+GET {{host}}/{{app}}/api/secured/whoami
+Accept: application/json
+Authorization: Basic YWxpY2U6d3JvbmctcGFzc3dvcmQ=

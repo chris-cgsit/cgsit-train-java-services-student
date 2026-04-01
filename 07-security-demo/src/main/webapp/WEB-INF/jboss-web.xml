@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    WildFly-specific: maps the deployment to the Elytron security domain.
+
+    "other" is WildFly's default ApplicationDomain that uses:
+      - application-users.properties  (users + passwords)
+      - application-roles.properties  (user → role mapping)
+
+    These files are in $JBOSS_HOME/standalone/configuration/
+
+    Add users with:
+      add-user.sh -a -u alice -p alice123 -g user
+      add-user.sh -a -u bob   -p bob123   -g user,admin
+
+    Windows:
+      add-user.bat -a -u alice -p alice123 -g user
+      add-user.bat -a -u bob   -p bob123   -g user,admin
+-->
+<jboss-web>
+    <security-domain>other</security-domain>
+</jboss-web>

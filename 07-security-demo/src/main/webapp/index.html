@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>security-demo — REST Security with Elytron</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        a { color: #0f3460; }
+        li { margin: 8px 0; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 20px; font-size: 0.85em; }
+        .warn { background: #fff8f0; border-left: 4px solid #e94560; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
+        .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+    </style>
+</head>
+<body>
+    <h1>security-demo</h1>
+    <p>REST API Security with WildFly Elytron &amp; Jakarta Security annotations.</p>
+
+    <h3>Public (no auth)</h3>
+    <ul>
+        <li><a href="api/public">GET /api/public</a> &mdash; Health check (no login)</li>
+    </ul>
+
+    <h3>Secured (BASIC auth)</h3>
+    <ul>
+        <li><code>GET /api/secured/whoami</code> &mdash; Show user identity + roles</li>
+        <li><code>GET /api/secured/user-area</code> &mdash; @RolesAllowed("user", "admin")</li>
+        <li><code>GET /api/secured/admin-area</code> &mdash; @RolesAllowed("admin") only</li>
+        <li><code>GET /api/secured/dashboard</code> &mdash; Different response per role</li>
+        <li><code>GET /api/secured/maintenance</code> &mdash; @DenyAll (always 403)</li>
+    </ul>
+
+    <div class="warn">
+        <strong>Setup required:</strong> Add users to WildFly before testing:
+        <pre style="margin: 8px 0; font-size: 0.9em;">add-user.bat -a -u alice -p alice123 -g user
+add-user.bat -a -u bob   -p bob123   -g user,admin</pre>
+    </div>
+    <div class="info">
+        <strong>Test:</strong> Use IntelliJ HTTP Client with
+        <code>Authorization: Basic ...</code> header, or open secured URLs in browser (login dialog).
+    </div>
+    <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training</div>
+</body>
+</html>
