@@ -1,5 +1,6 @@
 package com.cgsit.training.soap.client;
 
+import com.cgsit.training.soap.generated.CalculatorFault;
 import com.cgsit.training.soap.generated.CalculatorService;
 import com.cgsit.training.soap.generated.CalculatorService_Service;
 
@@ -8,12 +9,9 @@ import com.cgsit.training.soap.generated.CalculatorService_Service;
  *
  * Voraussetzung:
  *   1. mvn generate-sources   (generiert Client-Klassen aus WSDL)
- *   2. WildFly läuft mit cdi-demo deployed
+ *   2. WildFly läuft mit soap-demo deployed
  *
  * Ausführen in IntelliJ: Rechtsklick auf main() → Run
- *
- * Die generierten Klassen liegen in:
- *   target/generated-sources/wsimport/com.cgsit.training.soap.generated/
  *
  * Generierte Klassen:
  *   CalculatorService          — das Interface (Port)
@@ -21,11 +19,12 @@ import com.cgsit.training.soap.generated.CalculatorService_Service;
  *   Add, AddResponse           — Request/Response Objekte für add()
  *   Multiply, MultiplyResponse — Request/Response Objekte für multiply()
  *   Divide, DivideResponse     — Request/Response Objekte für divide()
- *   ObjectFactory              — Factory für die XML-Objekte
+ *   CalculatorFault            — Typed Exception für Fehlerfälle
+ *   CalculatorFaultInfo        — Detail-Objekt im Fault (operation, errorCode)
  */
 public class TypedCalculatorClient {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CalculatorFault {
         System.out.println("=== Typsicherer SOAP Client (aus WSDL generiert) ===");
         System.out.println();
 
@@ -45,10 +44,20 @@ public class TypedCalculatorClient {
         double quotient = calculator.divide(100, 3);
         System.out.println("  divide(100, 3)   = " + quotient);   // → 33.33...
 
+        // Division by zero — the server throws CalculatorException (@WebFault)
+        // which arrives as a typed CalculatorFault with getFaultInfo()
+        System.out.println();
+        System.out.println("--- Division by zero (typed fault) ---");
+        try {
+            calculator.divide(42, 0);
+        } catch (CalculatorFault e) {
+            var fault = e.getFaultInfo();
+            System.out.println("  Caught: " + e.getMessage());
+            System.out.println("  Operation: " + fault.getOperation());
+            System.out.println("  ErrorCode: " + fault.getErrorCode());
+        }
+
         System.out.println();
         System.out.println("=== Fertig ===");
-        System.out.println();
-        System.out.println("Beachte: Der Code sieht aus wie ein lokaler Methodenaufruf.");
-        System.out.println("Im Hintergrund wird SOAP XML über HTTP gesendet — komplett abstrahiert.");
     }
 }

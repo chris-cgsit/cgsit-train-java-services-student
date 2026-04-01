@@ -34,9 +34,10 @@ public class CalculatorService {
 
     @WebMethod
     public double divide(@WebParam(name = "a") double a,
-                         @WebParam(name = "b") double b) {
+                         @WebParam(name = "b") double b) throws CalculatorException {
         if (b == 0) {
-            throw new ArithmeticException("Division by zero");
+            throw new CalculatorException("Division by zero",
+                    new CalculatorFaultInfo("divide", "DIV_BY_ZERO"));
         }
         return a / b;
     }

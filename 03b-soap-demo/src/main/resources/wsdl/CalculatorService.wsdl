@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    CalculatorService WSDL — offline Kopie.
+    CalculatorService WSDL — offline copy with fault definition.
 
     Im Kurs: WildFly starten, http://localhost:8080/soap-demo/CalculatorService?wsdl
     im Browser öffnen, und diese Datei vergleichen.
-
-    Für die Client-Generierung brauchen wir die WSDL als Datei,
-    damit Maven auch ohne laufenden Server bauen kann.
 -->
 <definitions name="CalculatorService"
              targetNamespace="http://soap.training.cgsit.com/"
@@ -61,6 +58,15 @@
                     <xsd:element name="return" type="xsd:double"/>
                 </xsd:sequence>
             </xsd:complexType>
+
+            <!-- fault detail -->
+            <xsd:element name="CalculatorFault" type="tns:CalculatorFaultInfo"/>
+            <xsd:complexType name="CalculatorFaultInfo">
+                <xsd:sequence>
+                    <xsd:element name="operation" type="xsd:string"/>
+                    <xsd:element name="errorCode" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
         </xsd:schema>
     </types>
 
@@ -70,6 +76,7 @@
     <message name="multiplyResponse"><part name="parameters" element="tns:multiplyResponse"/></message>
     <message name="divideRequest"><part name="parameters" element="tns:divide"/></message>
     <message name="divideResponse"><part name="parameters" element="tns:divideResponse"/></message>
+    <message name="CalculatorFault"><part name="fault" element="tns:CalculatorFault"/></message>
 
     <portType name="CalculatorService">
         <operation name="add">
@@ -83,6 +90,7 @@
         <operation name="divide">
             <input message="tns:divideRequest"/>
             <output message="tns:divideResponse"/>
+            <fault name="CalculatorFault" message="tns:CalculatorFault"/>
         </operation>
     </portType>
 
@@ -102,6 +110,7 @@
             <soap:operation soapAction=""/>
             <input><soap:body use="literal"/></input>
             <output><soap:body use="literal"/></output>
+            <fault name="CalculatorFault"><soap:fault name="CalculatorFault" use="literal"/></fault>
         </operation>
     </binding>
 
