@@ -16,7 +16,8 @@ import jakarta.jws.WebService;
  * From the WSDL, a Java client can be generated:
  *   wsimport -keep -p com.cgsit.client http://localhost:8080/cdi-demo/CalculatorService?wsdl
  */
-@WebService(serviceName = "CalculatorService")
+@WebService(serviceName = "CalculatorService",
+            targetNamespace = "http://soap.training.cgsit.com/")
 public class CalculatorService {
 
     @WebMethod
