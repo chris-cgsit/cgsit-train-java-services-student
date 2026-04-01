@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>validation-demo — Bean Validation API</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        a { color: #0f3460; }
+        li { margin: 8px 0; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 20px; font-size: 0.85em; }
+        .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+    </style>
+</head>
+<body>
+    <h1>validation-demo</h1>
+    <p>REST API mit Bean Validation (Jakarta Validation 3.0).</p>
+    <ul>
+        <li><a href="api/products">GET /api/products</a> &mdash; Alle Produkte</li>
+        <li><a href="swagger-ui.html">Swagger UI</a> &mdash; Interaktive API-Dokumentation</li>
+        <li><a href="/openapi?format=JSON">OpenAPI Spec</a> &mdash; JSON Schema</li>
+    </ul>
+    <div class="info">
+        <strong>Validation testen:</strong> POST mit ung&uuml;ltigen Daten senden
+        (leerer Name, negativer Preis, ung&uuml;ltige Kategorie) &mdash; Server antwortet mit 400 + Fehlermeldungen.
+    </div>
+    <div class="info">
+        <strong>Hinweis:</strong> Dieses Modul ben&ouml;tigt <code>standalone-microprofile.xml</code>
+        f&uuml;r den <code>/openapi</code> Endpoint.
+    </div>
+    <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training</div>
+</body>
+</html>

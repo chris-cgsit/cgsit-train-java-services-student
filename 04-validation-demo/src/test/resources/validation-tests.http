@@ -1,0 +1,144 @@
+### ===========================================
+### Validation Demo — HTTP Tests
+###
+### Bean Validation mit Jakarta Validation 3.0
+### Voraussetzung: WildFly mit standalone-microprofile.xml
+###                und validation-demo deployed.
+### ===========================================
+
+@host = http://localhost:8080
+@app = validation-demo
+
+### Alle Produkte auflisten (5 Beispiel-Produkte)
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+### Einzelnes Produkt abrufen
+GET {{host}}/{{app}}/api/products/1
+Accept: application/json
+
+### Produkt nicht vorhanden — 404
+GET {{host}}/{{app}}/api/products/999
+Accept: application/json
+
+### ===========================================
+### VALID: Neues Produkt anlegen — 201 Created
+### ===========================================
+
+### Gültiges Produkt erstellen
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Ergonomic Mouse",
+  "price": 49.99,
+  "category": "Peripherie"
+}
+
+### ===========================================
+### INVALID: Validation Errors — 400 Bad Request
+### ===========================================
+
+### Leerer Name — @NotBlank verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": 29.99,
+  "category": "Electronics"
+}
+
+### Negativer Preis — @Positive verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Broken Product",
+  "price": -10.00,
+  "category": "Software"
+}
+
+### Fehlender Preis (null) — @NotNull verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "No Price Product",
+  "category": "Books"
+}
+
+### Ungültige Kategorie — @ValidCategory verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Mystery Product",
+  "price": 19.99,
+  "category": "InvalidCategory"
+}
+
+### Mehrere Fehler gleichzeitig — Name leer + Preis negativ + ungültige Kategorie
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -5.00,
+  "category": "Nonsense"
+}
+
+### Name zu lang (>100 Zeichen) — @Size verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "price": 10.00,
+  "category": "Books"
+}
+
+### ===========================================
+### UPDATE: Produkt aktualisieren
+### ===========================================
+
+### Gültiges Update
+PUT {{host}}/{{app}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Premium Mechanical Keyboard",
+  "price": 129.99,
+  "category": "Peripherie"
+}
+
+### Update mit ungültigen Daten — 400
+PUT {{host}}/{{app}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -1,
+  "category": "Wrong"
+}
+
+### ===========================================
+### DELETE: Produkt löschen
+### ===========================================
+
+### Produkt löschen — 204 No Content
+DELETE {{host}}/{{app}}/api/products/5
+
+### Nochmal löschen — 404 Not Found
+DELETE {{host}}/{{app}}/api/products/5
+
+### ===========================================
+### OpenAPI / Swagger
+### ===========================================
+
+### OpenAPI Spec abrufen (JSON)
+GET {{host}}/openapi?format=JSON
+Accept: application/json
+
+### Swagger UI im Browser öffnen:
+### http://localhost:8080/validation-demo/swagger-ui.html
