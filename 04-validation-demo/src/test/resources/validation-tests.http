@@ -1,7 +1,7 @@
 ### ===========================================
 ### Validation Demo — HTTP Tests
 ###
-### Bean Validation mit Jakarta Validation 3.0
+### Bean Validation + Jackson Serialization
 ### Voraussetzung: WildFly mit standalone-microprofile.xml
 ###                und validation-demo deployed.
 ### ===========================================
@@ -10,6 +10,7 @@
 @app = validation-demo
 
 ### Alle Produkte auflisten (5 Beispiel-Produkte)
+### Beachte: price als String (Jackson @JsonFormat), weight fehlt (@JsonIgnore)
 GET {{host}}/{{app}}/api/products
 Accept: application/json
 
@@ -25,14 +26,47 @@ Accept: application/json
 ### VALID: Neues Produkt anlegen — 201 Created
 ### ===========================================
 
-### Gültiges Produkt erstellen
+### Gültiges Produkt mit allen Feldern
 POST {{host}}/{{app}}/api/products
 Content-Type: application/json
 
 {
   "name": "Ergonomic Mouse",
-  "price": 49.99,
-  "category": "Peripherie"
+  "price": "49.99",
+  "category": "Peripherie",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
+}
+
+### Gültiges Produkt — weight wird ignoriert (@JsonIgnore)
+### id wird ignoriert (@JsonProperty READ_ONLY)
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "id": 999,
+  "name": "Wireless Headset",
+  "price": "79.99",
+  "category": "Peripherie",
+  "availableFrom": "2026-04-15",
+  "availableUntil": "08:00",
+  "weight": "0.35"
+}
+
+### ===========================================
+### JACKSON: Serialization Verhalten testen
+### ===========================================
+
+### price als Number statt String — Jackson akzeptiert beides
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Number Price Test",
+  "price": 29.99,
+  "category": "Books",
+  "availableFrom": "2026-05-01",
+  "availableUntil": "10:00"
 }
 
 ### ===========================================
@@ -45,8 +79,10 @@ Content-Type: application/json
 
 {
   "name": "",
-  "price": 29.99,
-  "category": "Electronics"
+  "price": "29.99",
+  "category": "Electronics",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
 ### Negativer Preis — @Positive verletzt
@@ -55,8 +91,10 @@ Content-Type: application/json
 
 {
   "name": "Broken Product",
-  "price": -10.00,
-  "category": "Software"
+  "price": "-10.00",
+  "category": "Software",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
 ### Fehlender Preis (null) — @NotNull verletzt
@@ -65,7 +103,9 @@ Content-Type: application/json
 
 {
   "name": "No Price Product",
-  "category": "Books"
+  "category": "Books",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
 ### Ungültige Kategorie — @ValidCategory verletzt
@@ -74,18 +114,44 @@ Content-Type: application/json
 
 {
   "name": "Mystery Product",
-  "price": 19.99,
-  "category": "InvalidCategory"
+  "price": "19.99",
+  "category": "InvalidCategory",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
-### Mehrere Fehler gleichzeitig — Name leer + Preis negativ + ungültige Kategorie
+### Datum in der Vergangenheit — @FutureOrPresent verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Expired Product",
+  "price": "19.99",
+  "category": "Books",
+  "availableFrom": "2020-01-01",
+  "availableUntil": "09:00"
+}
+
+### Fehlendes Datum — @NotNull verletzt
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "No Date Product",
+  "price": "19.99",
+  "category": "Books"
+}
+
+### Mehrere Fehler gleichzeitig
 POST {{host}}/{{app}}/api/products
 Content-Type: application/json
 
 {
   "name": "",
-  "price": -5.00,
-  "category": "Nonsense"
+  "price": "-5.00",
+  "category": "Nonsense",
+  "availableFrom": "2020-01-01",
+  "availableUntil": "09:00"
 }
 
 ### Name zu lang (>100 Zeichen) — @Size verletzt
@@ -94,8 +160,10 @@ Content-Type: application/json
 
 {
   "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-  "price": 10.00,
-  "category": "Books"
+  "price": "10.00",
+  "category": "Books",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
 ### ===========================================
@@ -108,8 +176,10 @@ Content-Type: application/json
 
 {
   "name": "Premium Mechanical Keyboard",
-  "price": 129.99,
-  "category": "Peripherie"
+  "price": "129.99",
+  "category": "Peripherie",
+  "availableFrom": "2026-04-01",
+  "availableUntil": "09:00"
 }
 
 ### Update mit ungültigen Daten — 400
@@ -118,8 +188,10 @@ Content-Type: application/json
 
 {
   "name": "",
-  "price": -1,
-  "category": "Wrong"
+  "price": "-1",
+  "category": "Wrong",
+  "availableFrom": "2020-01-01",
+  "availableUntil": "09:00"
 }
 
 ### ===========================================
