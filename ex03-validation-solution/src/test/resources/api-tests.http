@@ -1,0 +1,95 @@
+### ===========================================
+### Book API — HTTP Tests (IntelliJ HTTP Client)
+### ex03-validation: Bean Validation
+###
+### Defaults unten funktionieren sofort ohne Umgebungswahl.
+### Für andere Werte: http-client.env.json anpassen
+### und oben rechts "dev" Umgebung wählen (überschreibt Defaults).
+### ===========================================
+
+### Default-Variablen (greifen immer, env.json überschreibt sie)
+@host = http://localhost:8080
+@app = ex03-validation
+
+### Alle Bücher abrufen
+GET {{host}}/{{app}}/api/books
+Accept: application/json
+
+### Neues Buch erstellen (valide Daten)
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "The Pragmatic Programmer",
+  "author": "David Thomas",
+  "isbn": "978-0135957059",
+  "price": 49.99
+}
+
+### Ungültiges Buch: leerer Titel + negativer Preis (400 erwartet)
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "David Thomas",
+  "isbn": "978-0135957059",
+  "price": -5.00
+}
+
+### Ungültiges Buch: ungültige ISBN (400 erwartet)
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Some Book",
+  "author": "Some Author",
+  "isbn": "INVALID-ISBN",
+  "price": 29.99
+}
+
+### Buch aktualisieren (valide Daten)
+PUT {{host}}/{{app}}/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Clean Code (2nd Edition)",
+  "author": "Robert C. Martin",
+  "isbn": "978-0132350884",
+  "price": 39.99
+}
+
+### Ungültiges Update: leerer Autor (400 erwartet)
+PUT {{host}}/{{app}}/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "",
+  "isbn": "978-0132350884",
+  "price": 39.99
+}
+
+### ===========================================
+### Beispiel mit Response-Test (Assertion)
+### ===========================================
+
+### POST ungültiges Buch — 400 Bad Request prüfen
+POST {{host}}/{{app}}/api/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "",
+  "isbn": "",
+  "price": -1.00
+}
+
+> {%
+    client.test("Status ist 400 Bad Request", function() {
+        client.assert(response.status === 400, "Expected 400, got " + response.status);
+    });
+    client.test("Response enthält Validierungsfehler", function() {
+        client.assert(response.body !== null, "Response body ist leer");
+    });
+%}
