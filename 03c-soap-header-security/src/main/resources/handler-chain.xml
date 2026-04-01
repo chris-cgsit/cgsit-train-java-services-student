@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Handler Chain configuration for SecureCalculatorService.
+
+    Handler order matters:
+      1. LoggingHandler  — logs the raw SOAP XML (runs first, sees everything)
+      2. AuthHandler     — validates API key (runs second, rejects unauthorized)
+
+    This is referenced from @HandlerChain(file = "/handler-chain.xml")
+    on the service class. The file path is relative to the classpath root.
+-->
+<handler-chains xmlns="https://jakarta.ee/xml/ns/jakartaee">
+    <handler-chain>
+        <handler>
+            <handler-name>LoggingHandler</handler-name>
+            <handler-class>com.cgsit.training.soap.handler.LoggingHandler</handler-class>
+        </handler>
+        <handler>
+            <handler-name>AuthHandler</handler-name>
+            <handler-class>com.cgsit.training.soap.handler.AuthHandler</handler-class>
+        </handler>
+    </handler-chain>
+</handler-chains>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>soap-header-security — SOAP with Headers &amp; Handler Chain</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        a { color: #0f3460; }
+        li { margin: 8px 0; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 20px; font-size: 0.85em; }
+        .warn { background: #fff8f0; border-left: 4px solid #e94560; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
+        .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+    </style>
+</head>
+<body>
+    <h1>soap-header-security</h1>
+    <p>SOAP Web Service with Header Parameters &amp; Handler Chain Security.</p>
+    <ul>
+        <li><a href="SecureCalculatorService?wsdl">WSDL</a> &mdash; Service description with <code>&lt;soap:header&gt;</code> definitions</li>
+        <li><code>SecureCalculatorService</code> &mdash; SOAP Endpoint (POST)</li>
+    </ul>
+    <div class="info">
+        <strong>New compared to soap-demo:</strong>
+        <ul style="margin: 5px 0;">
+            <li><code>apiKey</code> &mdash; SOAP Header for authentication (validated by AuthHandler)</li>
+            <li><code>correlationId</code> &mdash; SOAP Header for request tracking</li>
+            <li><code>LoggingHandler</code> &mdash; logs raw SOAP XML in/out</li>
+            <li><code>AuthHandler</code> &mdash; validates API key, sets role in MessageContext</li>
+            <li><code>WebServiceContext</code> &mdash; service reads role for access control</li>
+            <li><code>divide()</code> &mdash; requires <code>admin</code> role</li>
+        </ul>
+    </div>
+    <div class="warn">
+        <strong>API keys &amp; roles:</strong><br>
+        <code>admin-key-2025</code> &rarr; role <code>admin</code> (all operations)<br>
+        <code>training-key-2025</code> &rarr; role <code>user</code> (add, multiply only)
+    </div>
+    <div class="info">
+        <strong>Client testen:</strong> <code>RawSoapClient.main()</code> oder <code>TypedSecureClient.main()</code> in IntelliJ starten.
+    </div>
+    <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training</div>
+</body>
+</html>

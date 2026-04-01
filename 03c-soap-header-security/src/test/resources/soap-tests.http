@@ -1,0 +1,139 @@
+### ===========================================
+### SecureCalculatorService — HTTP Tests
+###
+### SOAP Requests with apiKey and correlationId
+### in the SOAP Header.
+###
+### Prerequisite: WildFly running with
+### soap-header-security deployed.
+### ===========================================
+
+@host = http://localhost:8080
+@app = soap-header-security
+@ns = http://soap.training.cgsit.com/
+
+### WSDL abrufen — beachte die <soap:header> Definitionen
+GET {{host}}/{{app}}/SecureCalculatorService?wsdl
+Accept: text/xml
+
+### Addition: 10 + 20 (with valid API key)
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>training-key-2025</calc:apiKey>
+        <calc:correlationId>test-add-001</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:add>
+            <a>10</a>
+            <b>20</b>
+        </calc:add>
+    </soap:Body>
+</soap:Envelope>
+
+### Multiplikation: 6 * 7 (with valid API key)
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>training-key-2025</calc:apiKey>
+        <calc:correlationId>test-mul-002</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:multiply>
+            <a>6</a>
+            <b>7</b>
+        </calc:multiply>
+    </soap:Body>
+</soap:Envelope>
+
+### Division: 100 / 3 (with admin key)
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>admin-key-2025</calc:apiKey>
+        <calc:correlationId>test-div-003</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:divide>
+            <a>100</a>
+            <b>3</b>
+        </calc:divide>
+    </soap:Body>
+</soap:Envelope>
+
+### INVALID API key — should return SOAP Fault
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>wrong-key</calc:apiKey>
+        <calc:correlationId>test-fail-004</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:add>
+            <a>1</a>
+            <b>1</b>
+        </calc:add>
+    </soap:Body>
+</soap:Envelope>
+
+### MISSING API key — should return SOAP Fault
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Body>
+        <calc:add>
+            <a>1</a>
+            <b>1</b>
+        </calc:add>
+    </soap:Body>
+</soap:Envelope>
+
+### Division with "user" role — should return SOAP Fault (requires "admin")
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>training-key-2025</calc:apiKey>
+        <calc:correlationId>test-role-005</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:divide>
+            <a>100</a>
+            <b>3</b>
+        </calc:divide>
+    </soap:Body>
+</soap:Envelope>
+
+### Division by zero — SOAP Fault (with admin auth, business error)
+POST {{host}}/{{app}}/SecureCalculatorService
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:calc="{{ns}}">
+    <soap:Header>
+        <calc:apiKey>admin-key-2025</calc:apiKey>
+        <calc:correlationId>test-divzero-006</calc:correlationId>
+    </soap:Header>
+    <soap:Body>
+        <calc:divide>
+            <a>42</a>
+            <b>0</b>
+        </calc:divide>
+    </soap:Body>
+</soap:Envelope>

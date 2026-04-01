@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    WildFly does not expose the JAX-WS client API (jakarta.xml.ws.Service)
+    to deployments by default. The generated WSDL client classes extend
+    jakarta.xml.ws.Service and need this module at runtime.
+-->
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="jakarta.xml.ws.api"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>
