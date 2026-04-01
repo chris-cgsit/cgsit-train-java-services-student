@@ -53,4 +53,20 @@ public class BookResource {
         }
         return Response.status(Status.NOT_FOUND).build();
     }
+
+    // Programmatic validation in the service layer — no @Valid here!
+    // The service validates manually with @Inject Validator.
+    @POST
+    @Path("/validate-and-create")
+    public Response validateAndCreate(Book book) {
+        Book created = service.validateAndCreate(book);
+        return Response.status(Status.CREATED).entity(created).build();
+    }
+
+    // Batch import — service validates each book, skips invalid ones.
+    @POST
+    @Path("/import")
+    public List<Book> importBooks(List<Book> books) {
+        return service.importBooks(books);
+    }
 }

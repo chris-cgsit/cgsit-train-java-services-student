@@ -93,3 +93,60 @@ Content-Type: application/json
         client.assert(response.body !== null, "Response body ist leer");
     });
 %}
+
+### ===========================================
+### Programmatic Validation (Service Layer)
+### ===========================================
+
+### validate-and-create: valides Buch — 201 Created
+### Validation passiert im Service (nicht im Resource via @Valid)
+POST {{host}}/{{app}}/api/books/validate-and-create
+Content-Type: application/json
+
+{
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "isbn": "978-0134685991",
+  "price": 44.99
+}
+
+### validate-and-create: ungültiges Buch — 400 (Service wirft ConstraintViolationException)
+POST {{host}}/{{app}}/api/books/validate-and-create
+Content-Type: application/json
+
+{
+  "title": "",
+  "author": "",
+  "isbn": "INVALID",
+  "price": -10.00
+}
+
+### ===========================================
+### Batch Import (Service validates each book)
+### ===========================================
+
+### Batch import: 3 Bücher, davon 1 ungültig
+### Nur die 2 gültigen werden angelegt, das ungültige wird übersprungen
+POST {{host}}/{{app}}/api/books/import
+Content-Type: application/json
+
+[
+  {
+    "title": "Design Patterns",
+    "author": "Gang of Four",
+    "isbn": "978-0201633610",
+    "price": 54.99
+  },
+  {
+    "title": "",
+    "author": "",
+    "isbn": "INVALID",
+    "price": -5.00
+  },
+  {
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "isbn": "978-0134757599",
+    "price": 47.99
+  }
+]
