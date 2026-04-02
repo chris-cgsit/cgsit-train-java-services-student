@@ -249,4 +249,100 @@ class ProductResourceIT {
         .then()
             .statusCode(404);
     }
+
+    // ========================================================================
+    // AUTH EXAMPLES (commented out)
+    //
+    // So würden die Tests aussehen, wenn die API abgesichert wäre
+    // (z.B. mit 07-security-demo Konfiguration: Basic Auth oder JWT).
+    // ========================================================================
+
+    /*
+    // --- HTTP Basic Auth ---
+
+    @Test
+    @DisplayName("Basic Auth — authenticated user can list products")
+    void shouldListProductsWithBasicAuth() {
+        given()
+            .auth().basic("alice", "alice123")
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(200)
+            .body("size()", greaterThan(0));
+    }
+
+    @Test
+    @DisplayName("Basic Auth — no credentials returns 401")
+    void shouldReturn401WithoutAuth() {
+        given()
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(401);
+    }
+
+    @Test
+    @DisplayName("Basic Auth — wrong password returns 401")
+    void shouldReturn401WithWrongPassword() {
+        given()
+            .auth().basic("alice", "wrong-password")
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(401);
+    }
+
+    @Test
+    @DisplayName("Basic Auth — user without admin role gets 403")
+    void shouldReturn403ForNonAdmin() {
+        given()
+            .auth().basic("alice", "alice123")  // role: user (not admin)
+        .when()
+            .get("/admin/settings")
+        .then()
+            .statusCode(403);
+    }
+
+    // --- Bearer Token (JWT) ---
+
+    @Test
+    @DisplayName("Bearer Token — authenticated with JWT")
+    void shouldListProductsWithBearerToken() {
+        String token = "eyJhbGciOiJSUzI1NiJ9...";  // from Keycloak or test token
+
+        given()
+            .auth().oauth2(token)
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(200);
+    }
+
+    @Test
+    @DisplayName("Bearer Token — expired token returns 401")
+    void shouldReturn401WithExpiredToken() {
+        String expiredToken = "eyJhbGciOiJSUzI1NiJ9.expired...";
+
+        given()
+            .auth().oauth2(expiredToken)
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(401);
+    }
+
+    // --- Custom API Key ---
+
+    @Test
+    @DisplayName("API Key — valid key in custom header")
+    void shouldAcceptApiKey() {
+        given()
+            .header("X-API-Key", "training-key-2025")
+        .when()
+            .get("/products")
+        .then()
+            .statusCode(200);
+    }
+    */
 }
