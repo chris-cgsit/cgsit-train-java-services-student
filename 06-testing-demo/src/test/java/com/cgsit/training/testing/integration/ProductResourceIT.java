@@ -1,11 +1,13 @@
 package com.cgsit.training.testing.integration;
 
+import com.cgsit.training.testing.model.Product;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * REST-assured Integration Tests for ProductResource.
@@ -91,6 +93,43 @@ class ProductResourceIT {
             .body("name", equalTo("REST-assured Test Product"))
             .body("price", equalTo(42.0f))
             .body("id", notNullValue());
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("POST — send Java object, extract response as Java object")
+    void shouldCreateAndExtractAsObject() {
+        // SEND: Java object directly as request body (Jackson serializes it)
+        Product input = new Product(null, "Typed Test Product", 77.50);
+
+        // EXTRACT: response body deserialized back to Java object
+        Product created = given()
+            .contentType(ContentType.JSON)
+            .body(input)                         // ← Java object, not JSON string
+        .when()
+            .post("/products")
+        .then()
+            .statusCode(201)
+            .extract()
+            .as(Product.class);                  // ← extract as typed object
+
+        // ASSERT: on the Java object — full IDE support, type-safe
+        assertNotNull(created.id(), "Server should assign an ID");
+        assertEquals("Typed Test Product", created.name());
+        assertEquals(77.50, created.price(), 0.001);
+
+        // VERIFY: read back from server and compare
+        Product fetched = given()
+        .when()
+            .get("/products/" + created.id())
+        .then()
+            .statusCode(200)
+            .extract()
+            .as(Product.class);
+
+        assertEquals(created.id(), fetched.id());
+        assertEquals(created.name(), fetched.name());
+        assertEquals(created.price(), fetched.price(), 0.001);
     }
 
     @Test
