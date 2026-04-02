@@ -1,0 +1,118 @@
+### ===========================================
+### Advanced REST Demo — HTTP Tests
+###
+### Search/Paging, API Versioning, CORS, Rate Limiting
+### ===========================================
+
+@host = http://localhost:8080
+@app = advanced-rest-demo
+
+### ===========================================
+### SEARCH & PAGING
+### ===========================================
+
+### Alle Produkte (ohne Paging)
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+### Search: Default-Paging (page 0, size 10)
+GET {{host}}/{{app}}/api/products/search
+Accept: application/json
+
+### Search: Seite 2 mit 5 Einträgen
+GET {{host}}/{{app}}/api/products/search?page=1&size=5
+Accept: application/json
+
+### Search: Dritte Seite
+GET {{host}}/{{app}}/api/products/search?page=2&size=5
+Accept: application/json
+
+### Search: Nach Name filtern
+GET {{host}}/{{app}}/api/products/search?name=Key
+Accept: application/json
+
+### Search: Nach Kategorie filtern
+GET {{host}}/{{app}}/api/products/search?category=Electronics
+Accept: application/json
+
+### Search: Nach Kategorie + Sortierung nach Preis absteigend
+GET {{host}}/{{app}}/api/products/search?category=Electronics&sort=price&dir=DESC
+Accept: application/json
+
+### Search: Books sortiert nach Name
+GET {{host}}/{{app}}/api/products/search?category=Books&sort=name&dir=ASC
+Accept: application/json
+
+### Search: Kombiniert — Name + Kategorie + Paging + Sort
+### (Angular Material Table würde genau so einen Request senden)
+GET {{host}}/{{app}}/api/products/search?name=Mo&category=Electronics&page=0&size=5&sort=price&dir=ASC
+Accept: application/json
+
+### Search: Alle Peripherie-Produkte, sortiert nach Preis
+GET {{host}}/{{app}}/api/products/search?category=Peripherie&sort=price&dir=ASC&size=20
+Accept: application/json
+
+### Search: Leeres Ergebnis
+GET {{host}}/{{app}}/api/products/search?name=gibtesnicht
+Accept: application/json
+
+### ===========================================
+### API VERSIONING (URL Path)
+### ===========================================
+
+### V1: Einfache Response
+GET {{host}}/{{app}}/api/v1/info
+Accept: application/json
+
+### V2: Erweiterte Response (mit features + uptime)
+GET {{host}}/{{app}}/api/v2/info
+Accept: application/json
+
+### ===========================================
+### CORS Headers (prüfe Response Headers)
+### ===========================================
+
+### Normaler GET — CORS Headers in Response sichtbar
+### Beachte: Access-Control-Allow-Origin: *
+GET {{host}}/{{app}}/api/products/search?size=3
+Accept: application/json
+
+### OPTIONS Preflight (wie ein Browser ihn sendet)
+OPTIONS {{host}}/{{app}}/api/products
+Accept: application/json
+Origin: http://localhost:4200
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+
+### ===========================================
+### RATE LIMITING (prüfe Response Headers)
+### ===========================================
+
+### Normaler Request — beachte X-RateLimit-* Headers
+### X-RateLimit-Limit: 60
+### X-RateLimit-Remaining: 59 (sinkt mit jedem Request)
+### X-RateLimit-Reset: <unix timestamp>
+GET {{host}}/{{app}}/api/products/search?size=3
+Accept: application/json
+
+### Einzelnes Produkt — auch hier Rate Limit Headers
+GET {{host}}/{{app}}/api/products/1
+Accept: application/json
+
+### ===========================================
+### NEUES PRODUKT (POST)
+### ===========================================
+
+### Produkt anlegen — beachte 201 + CORS + Rate Limit Headers
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "New Product",
+  "price": 99.99,
+  "category": "Electronics"
+}
+
+### Danach Search: neues Produkt erscheint
+GET {{host}}/{{app}}/api/products/search?name=New
+Accept: application/json

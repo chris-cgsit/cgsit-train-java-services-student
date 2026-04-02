@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>advanced-rest-demo — Advanced REST Patterns</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 650px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        h3 { margin-top: 20px; color: #1a1a2e; }
+        a { color: #0f3460; }
+        li { margin: 6px 0; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
+        .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+    </style>
+</head>
+<body>
+    <h1>advanced-rest-demo</h1>
+    <p>Advanced REST Patterns: Search/Paging, Versioning, CORS, Rate Limiting.</p>
+
+    <h3>Search &amp; Paging</h3>
+    <ul>
+        <li><a href="api/products">GET /api/products</a> &mdash; All products</li>
+        <li><a href="api/products/search">GET /api/products/search</a> &mdash; Paginated search</li>
+        <li><a href="api/products/search?category=Books&sort=price&dir=DESC&size=5">Search Books by price DESC</a></li>
+    </ul>
+
+    <h3>API Versioning</h3>
+    <ul>
+        <li><a href="api/v1/info">GET /api/v1/info</a> &mdash; Version 1 (basic)</li>
+        <li><a href="api/v2/info">GET /api/v2/info</a> &mdash; Version 2 (extended)</li>
+    </ul>
+
+    <h3>Response Headers</h3>
+    <ul>
+        <li><code>Access-Control-Allow-Origin: *</code> &mdash; CORS</li>
+        <li><code>X-RateLimit-Limit: 60</code> &mdash; Rate Limit</li>
+        <li><code>X-RateLimit-Remaining: NN</code> &mdash; Requests left</li>
+    </ul>
+
+    <div class="info">
+        Check response headers in browser DevTools (Network tab) or IntelliJ HTTP Client.
+    </div>
+    <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training</div>
+</body>
+</html>
