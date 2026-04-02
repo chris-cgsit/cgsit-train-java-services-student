@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer API — Swagger UI</title>
+    <link rel="stylesheet" href="webjars/swagger-ui/5.18.2/swagger-ui.css">
+    <style>body { margin: 0; background: #fafafa; } .topbar { display: none; }</style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="webjars/swagger-ui/5.18.2/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: '/openapi?format=JSON',
+            dom_id: '#swagger-ui',
+            presets: [SwaggerUIBundle.presets.apis],
+            layout: 'BaseLayout',
+            deepLinking: true,
+            tryItOutEnabled: true
+        });
+    </script>
+</body>
+</html>

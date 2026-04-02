@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abschlussprojekt — Customer API</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        a { color: #0f3460; }
+        li { margin: 8px 0; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 20px; font-size: 0.85em; }
+        .warn { background: #fff8f0; border-left: 4px solid #e94560; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
+        .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+    </style>
+</head>
+<body>
+    <h1>Abschlussprojekt &mdash; Customer API</h1>
+    <p>REST API mit Bean Validation, Jackson, OpenAPI, Error Handling, Testing.</p>
+    <ul>
+        <li><a href="api/customers">GET /api/customers</a> &mdash; Alle Kunden</li>
+        <li><a href="swagger-ui.html">Swagger UI</a> &mdash; Interaktive API-Dokumentation</li>
+        <li><a href="/openapi?format=JSON">OpenAPI Spec</a></li>
+    </ul>
+    <div class="warn">
+        <strong>TODO:</strong>
+        <ul style="margin: 5px 0;">
+            <li><code>ServiceExceptionMapper</code> implementieren (sonst 500 statt 404/409)</li>
+            <li><code>CustomerResourceIT</code> REST-assured Tests implementieren</li>
+        </ul>
+    </div>
+    <div class="info">
+        <strong>Fertig:</strong> Customer, CustomerStore, CustomerService, CustomerResource,
+        Swagger UI, Mockito Unit Tests, IntelliJ HTTP Tests.
+    </div>
+    <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training &mdash; Abschlussprojekt</div>
+</body>
+</html>
