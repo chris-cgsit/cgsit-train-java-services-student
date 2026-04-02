@@ -1,0 +1,97 @@
+### ===========================================
+### Testing Demo — HTTP Tests (IntelliJ)
+###
+### Voraussetzung: WildFly mit testing-demo deployed
+###   mvn clean package wildfly:dev
+### ===========================================
+
+@host = http://localhost:8080
+@app = testing-demo
+
+### ===========================================
+### GET: Produkte abrufen
+### ===========================================
+
+### Alle Produkte
+GET {{host}}/{{app}}/api/products
+Accept: application/json
+
+### Einzelnes Produkt
+GET {{host}}/{{app}}/api/products/1
+Accept: application/json
+
+### Produkt nicht vorhanden — 404
+GET {{host}}/{{app}}/api/products/9999
+Accept: application/json
+
+### ===========================================
+### POST: Produkt anlegen
+### ===========================================
+
+### Gültiges Produkt — 201 Created + Location Header
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "IntelliJ HTTP Client Test",
+  "price": 42.00
+}
+
+### Leerer Name — 400 (Validation)
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": 10.00
+}
+
+### Negativer Preis — 400 (Validation)
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Bad Product",
+  "price": -5.00
+}
+
+### Mehrere Fehler — 400
+POST {{host}}/{{app}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -1.00
+}
+
+### ===========================================
+### PUT: Produkt aktualisieren
+### ===========================================
+
+### Gültiges Update
+PUT {{host}}/{{app}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Updated via HTTP Client",
+  "price": 99.99
+}
+
+### Update nicht existierendes Produkt — 404
+PUT {{host}}/{{app}}/api/products/9999
+Content-Type: application/json
+
+{
+  "name": "Ghost",
+  "price": 10.00
+}
+
+### ===========================================
+### DELETE: Produkt löschen
+### ===========================================
+
+### Produkt löschen — 204
+DELETE {{host}}/{{app}}/api/products/2
+
+### Nochmal löschen — 404
+DELETE {{host}}/{{app}}/api/products/2
