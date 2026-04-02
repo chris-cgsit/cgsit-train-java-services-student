@@ -188,14 +188,47 @@ class JUnit5BasicsTest {
     }
 
     // ========== @CsvFileSource ==========
+    //
+    // Loads test data from a CSV file in src/test/resources/.
+    //
+    // Important parameters:
+    //   encoding       — file encoding (default: platform-dependent!)
+    //                    ALWAYS set to "UTF-8" for portable tests
+    //   numLinesToSkip  — skip header lines
+    //   delimiter       — column separator (default: ',')
+    //   delimiterString — multi-char separator (e.g. "\t" for tab)
+    //   nullValues      — which strings become null (e.g. "N/A", "")
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/test-products.csv", numLinesToSkip = 1)
-    @DisplayName("Product data from CSV file")
+    @CsvFileSource(
+        resources = "/test-products.csv",
+        numLinesToSkip = 1,
+        encoding = "UTF-8"          // explicit! default is platform-dependent
+    )
+    @DisplayName("Product data from CSV file (UTF-8, comma-separated)")
     void testFromCsvFile(String name, double price, String category) {
-        assertFalse(name.isBlank());
-        assertTrue(price > 0);
-        assertFalse(category.isBlank());
+        assertFalse(name.isBlank(), "Name should not be blank: " + name);
+        assertTrue(price > 0, "Price should be positive: " + price);
+        assertFalse(category.isBlank(), "Category should not be blank");
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(
+        resources = "/produkte-deutsch.csv",
+        numLinesToSkip = 1,
+        encoding = "UTF-8",         // Umlaute: ü, ö, ä
+        delimiter = ';',            // European CSV: semicolon instead of comma
+        nullValues = {"N/A", ""}    // empty string and "N/A" become null
+    )
+    @DisplayName("German CSV with semicolons, Umlaute, and null values")
+    void testGermanCsvFile(String name, Double price, String category, String description) {
+        if (name != null) {
+            assertFalse(name.isBlank());
+        }
+        // price and category can be null (nullValues = {"N/A", ""})
+        if (price != null) {
+            assertTrue(price > 0);
+        }
     }
 
     // ========== @EnumSource ==========
