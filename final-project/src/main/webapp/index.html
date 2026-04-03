@@ -30,7 +30,7 @@
         <li><a href="/openapi?format=JSON">OpenAPI Spec</a></li>
     </ul>
 
-    <h3>Aufgaben (4 TODOs)</h3>
+    <h3>Aufgaben (5 TODOs)</h3>
 
     <div class="todo">
         <strong>TODO 1: Bean Validation &mdash; <code>model/Customer.java</code></strong>
@@ -77,6 +77,18 @@
         </ul>
     </div>
 
+    <div class="todo">
+        <strong>TODO 5: MicroProfile Config &mdash; <code>resource/VersionResource.java</code></strong>
+        <ul style="margin: 5px 0;">
+            <li><code>@Inject @ConfigProperty(name = "app.version")</code> injizieren</li>
+            <li><code>@Inject @ConfigProperty(name = "app.name")</code> injizieren</li>
+            <li><code>GET /api/version</code> &mdash; gibt <code>{"name": "...", "version": "..."}</code> zur&uuml;ck</li>
+            <li>Default-Werte stehen in <code>META-INF/microprofile-config.properties</code></li>
+            <li>Per CLI &uuml;berschreiben:
+                <code>/system-property=app.version:add(value=1.0.0)</code></li>
+        </ul>
+    </div>
+
     <h3>Bewertungskriterien</h3>
     <ol>
         <li><code>@Pattern</code> auf phone &mdash; ung&uuml;ltige Telefonnummer ergibt 400</li>
@@ -85,6 +97,7 @@
         <li>Mindestens 5 REST-assured Tests gr&uuml;n</li>
         <li>CRUD Workflow Test funktioniert</li>
         <li>Swagger UI zeigt die API korrekt an</li>
+        <li><code>GET /api/version</code> liefert name + version aus MicroProfile Config</li>
     </ol>
 
     <h3>Was ist bereits fertig</h3>
