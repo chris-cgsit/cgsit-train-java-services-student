@@ -25,6 +25,7 @@ Content-Type: application/json
 {
   "name": "Fritz Mustermann",
   "email": "fritz@example.com",
+  "phone": "+43 664 9999999",
   "company": "TestAG"
 }
 
@@ -35,7 +36,18 @@ Content-Type: application/json
 {
   "name": "Anna Doppelt",
   "email": "anna@example.com",
+  "phone": "+43 664 1111111",
   "company": "TestAG"
+}
+
+### Ungueltige Telefonnummer — 400 (nur wenn @Pattern im Model gesetzt!)
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Bad Phone",
+  "email": "badphone@example.com",
+  "phone": "12345"
 }
 
 ### Leerer Name — 400

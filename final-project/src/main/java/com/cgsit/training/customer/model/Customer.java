@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-@JsonPropertyOrder({"id", "name", "email", "company", "createdAt"})
+@JsonPropertyOrder({"id", "name", "email", "phone", "company", "createdAt"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Customer with validation and Jackson annotations")
 public record Customer(
@@ -28,6 +28,21 @@ public record Customer(
     @Email(message = "Ungueltige E-Mail-Adresse")
     @Schema(description = "Email address (unique)", example = "anna@example.com")
     String email,
+
+    // TODO: Bean Validation fuer Telefonnummer hinzufuegen
+    //
+    //   Anforderungen:
+    //   - Darf nicht leer sein (@NotBlank)
+    //   - Muss ein gueltiges Format haben (@Pattern)
+    //   - Erlaubte Formate: +43 664 1234567, +49 170 1234567, +1 555 1234567
+    //   - Regex Tipp: "\\+\\d{1,3}\\s\\d{2,4}\\s\\d{5,10}"
+    //   - Message: "Telefonnummer muss Format +XX XXX XXXXXXX haben"
+    //
+    //   Beispiel:
+    //   @NotBlank(message = "...")
+    //   @Pattern(regexp = "...", message = "...")
+    @Schema(description = "Phone number (+43 664 1234567)", example = "+43 664 1234567")
+    String phone,
 
     @Size(max = 100, message = "Firmenname darf maximal 100 Zeichen lang sein")
     @Schema(description = "Company name (optional)", example = "CGS IT Solutions")

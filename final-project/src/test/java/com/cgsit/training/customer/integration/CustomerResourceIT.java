@@ -118,6 +118,17 @@ class CustomerResourceIT {
 
     @Test
     @Order(14)
+    @DisplayName("POST — invalid phone number should return 400")
+    void shouldRejectInvalidPhone() {
+        // TODO: POST mit phone "12345" (falsches Format)
+        //   → statusCode 400
+        //
+        // Hinweis: Funktioniert erst wenn @Pattern auf phone im Customer-Record gesetzt ist!
+        fail("TODO: Implementiere diesen Test");
+    }
+
+    @Test
+    @Order(15)
     @DisplayName("POST — duplicate email should return 409")
     void shouldRejectDuplicateEmail() {
         // TODO: POST mit email "anna@example.com" (existiert bereits!)

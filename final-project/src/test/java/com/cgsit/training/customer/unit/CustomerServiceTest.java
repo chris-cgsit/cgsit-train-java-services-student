@@ -31,7 +31,7 @@ class CustomerServiceTest {
     CustomerService service;
 
     static Customer testCustomer(Long id, String name, String email) {
-        return new Customer(id, name, email, "TestCorp", LocalDateTime.now());
+        return new Customer(id, name, email, "+43 664 1234567", "TestCorp", LocalDateTime.now());
     }
 
     @Nested
