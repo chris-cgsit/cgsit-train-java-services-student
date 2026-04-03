@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cgsit.training</groupId>
-    <artifactId>final-project</artifactId>
+    <artifactId>final-project-solution</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>Abschlussprojekt — Customer API</name>
+    <name>Abschlussprojekt — Customer API (Solution)</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
