@@ -1,0 +1,65 @@
+### ===========================================
+### Config Demo — HTTP Tests
+###
+### MicroProfile Config: Properties, Env-Vars, System Props
+### Voraussetzung: WildFly mit standalone-microprofile.xml
+### ===========================================
+
+@host = http://localhost:8080
+@app = config-demo
+
+### Alle Config-Werte anzeigen
+### Beachte: Werte kommen aus microprofile-config.properties (Default)
+### Setze Env-Vars um sie zu ueberschreiben
+GET {{host}}/{{app}}/api/config
+Accept: application/json
+
+### Einzelnen Config-Wert + Quelle anzeigen
+GET {{host}}/{{app}}/api/config/source/app.name
+Accept: application/json
+
+### SMTP Host Quelle
+GET {{host}}/{{app}}/api/config/source/smtp.host
+Accept: application/json
+
+### Feature Flag
+GET {{host}}/{{app}}/api/config/source/feature.darkmode
+Accept: application/json
+
+### Nicht existierender Key
+GET {{host}}/{{app}}/api/config/source/not.existing.key
+Accept: application/json
+
+### Alle bekannten Properties auflisten
+GET {{host}}/{{app}}/api/config/all-properties
+Accept: application/json
+
+### ===========================================
+### Notification Service (nutzt Config-Werte)
+### ===========================================
+
+### Notification senden (nutzt smtp.host, smtp.port aus Config)
+POST {{host}}/{{app}}/api/config/notify
+Content-Type: application/json
+
+{
+  "to": "student@example.com",
+  "message": "Config works!"
+}
+
+### ===========================================
+### Test: Env-Vars ueberschreiben
+###
+### PowerShell:
+###   $env:APP_NAME="Production App"
+###   $env:APP_ENVIRONMENT="production"
+###   $env:SMTP_HOST="mail.prod.example.com"
+###   $env:FEATURE_DARKMODE="true"
+###   → WildFly neu starten
+###   → GET /api/config zeigt neue Werte
+###
+### CMD:
+###   set APP_NAME=Production App
+###   set SMTP_HOST=mail.prod.example.com
+###   → WildFly neu starten
+### ===========================================
