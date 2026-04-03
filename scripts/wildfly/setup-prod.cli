@@ -1,0 +1,47 @@
+# ============================================================
+# WildFly CLI Script: PROD Setup (offline)
+# ============================================================
+#
+# Configures a standalone.xml for production:
+#   - MicroProfile subsystems (Config, Health, OpenAPI)
+#   - PostgreSQL Datasource with connection pool
+#   - Production logging (WARN console, rotating file)
+#
+# Prerequisites:
+#   - PostgreSQL JDBC driver installed as WildFly module
+#   - Environment variables: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+#
+# Usage:
+#   jboss-cli.bat --file=scripts/wildfly/setup-prod.cli
+#
+# ============================================================
+
+embed-server --server-config=standalone.xml
+
+# Apply common configuration
+run-batch --file=scripts/wildfly/00-common.cli
+
+# Apply PROD datasource (PostgreSQL)
+run-batch --file=scripts/wildfly/01-datasource-prod.cli
+
+# Apply PROD logging (minimal)
+run-batch --file=scripts/wildfly/02-logging-prod.cli
+
+stop-embedded-server
+
+echo ""
+echo "=== PROD Setup complete ==="
+echo "standalone.xml has been configured with:"
+echo "  - MicroProfile Config, Health, OpenAPI"
+echo "  - PostgreSQL Datasource (TrainingDS)"
+echo "  - Production logging (WARN console + daily rotating file)"
+echo ""
+echo "Set environment variables before starting:"
+echo "  set DB_HOST=prod-db"
+echo "  set DB_PORT=5432"
+echo "  set DB_NAME=training"
+echo "  set DB_USER=admin"
+echo "  set DB_PASSWORD=secret"
+echo ""
+echo "Start WildFly with: standalone.bat"
+echo ""

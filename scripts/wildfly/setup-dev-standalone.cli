@@ -1,0 +1,65 @@
+# ============================================================
+# WildFly CLI Script: DEV Setup (standalone — alles in einer Datei)
+# ============================================================
+#
+# Konfiguriert standalone.xml fuer Entwicklung:
+#   - MicroProfile Config, Health, OpenAPI
+#   - H2 In-Memory Datasource
+#   - Debug Logging
+#
+# Dieses Script ist OFFLINE — WildFly muss NICHT laufen!
+# Es modifiziert standalone.xml direkt.
+#
+# Usage:
+#   %JBOSS_HOME%\bin\jboss-cli.bat --file=C:\work\git\cgsit-train-java-services-student\scripts\wildfly\setup-dev-standalone.cli
+#
+# Danach:
+#   %JBOSS_HOME%\bin\standalone.bat
+#
+# ============================================================
+
+embed-server --server-config=standalone.xml
+
+# --- MicroProfile Subsystems aktivieren ---
+# (wie in standalone-microprofile.xml, aber auf standalone.xml angewendet)
+
+/extension=org.wildfly.extension.microprofile.config-smallrye:add()
+/subsystem=microprofile-config-smallrye:add()
+
+/extension=org.wildfly.extension.microprofile.health-smallrye:add()
+/subsystem=microprofile-health-smallrye:add()
+
+/extension=org.wildfly.extension.microprofile.openapi-smallrye:add()
+/subsystem=microprofile-openapi-smallrye:add()
+
+# --- H2 In-Memory Datasource ---
+/subsystem=datasources/data-source=TrainingDS:add( \
+    jndi-name=java:jboss/datasources/TrainingDS, \
+    connection-url=jdbc:h2:mem:training;DB_CLOSE_DELAY=-1, \
+    driver-name=h2, \
+    user-name=sa, \
+    password=sa, \
+    min-pool-size=2, \
+    max-pool-size=10)
+
+# --- Logging ---
+/subsystem=logging/logger=com.cgsit.training:add(level=DEBUG)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
+
+stop-embedded-server
+
+echo ""
+echo "=== DEV Setup fertig ==="
+echo ""
+echo "Konfiguriert:"
+echo "  [+] MicroProfile Config, Health, OpenAPI"
+echo "  [+] H2 In-Memory Datasource (TrainingDS)"
+echo "  [+] DEBUG Logging fuer com.cgsit.training"
+echo ""
+echo "Starten mit:"
+echo "  %JBOSS_HOME%\bin\standalone.bat"
+echo ""
+echo "Pruefen:"
+echo "  http://localhost:8080/health"
+echo "  http://localhost:8080/openapi"
+echo ""

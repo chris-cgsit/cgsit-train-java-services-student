@@ -1,0 +1,47 @@
+# ============================================================
+# WildFly CLI Script: DEV Setup (offline)
+# ============================================================
+#
+# Configures a standalone.xml for development:
+#   - MicroProfile subsystems (Config, Health, OpenAPI)
+#   - H2 In-Memory Datasource
+#   - Debug logging
+#
+# This script runs OFFLINE — WildFly does NOT need to be running!
+# It modifies standalone.xml directly.
+#
+# Usage:
+#   jboss-cli.bat --file=scripts/wildfly/setup-dev.cli
+#
+# After running:
+#   standalone.bat
+#   → MicroProfile endpoints available (/health, /openapi)
+#   → Datasource TrainingDS configured
+#   → Debug logging active
+#
+# ============================================================
+
+# Start embedded server (offline mode — modifies XML directly)
+embed-server --server-config=standalone.xml
+
+# Apply common configuration (MicroProfile, base logging)
+run-batch --file=scripts/wildfly/00-common.cli
+
+# Apply DEV datasource (H2 in-memory)
+run-batch --file=scripts/wildfly/01-datasource-dev.cli
+
+# Apply DEV logging (DEBUG)
+run-batch --file=scripts/wildfly/02-logging-dev.cli
+
+# Stop embedded server (saves changes to standalone.xml)
+stop-embedded-server
+
+echo ""
+echo "=== DEV Setup complete ==="
+echo "standalone.xml has been configured with:"
+echo "  - MicroProfile Config, Health, OpenAPI"
+echo "  - H2 In-Memory Datasource (TrainingDS)"
+echo "  - DEBUG logging for com.cgsit.training"
+echo ""
+echo "Start WildFly with: standalone.bat"
+echo ""
