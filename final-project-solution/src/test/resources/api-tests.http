@@ -1,0 +1,85 @@
+### ===========================================
+### Customer API — IntelliJ HTTP Tests
+### Abschlussprojekt
+### ===========================================
+
+@host = http://localhost:8080
+@app = final-project
+
+### Alle Kunden
+GET {{host}}/{{app}}/api/customers
+Accept: application/json
+
+### Einzelner Kunde
+GET {{host}}/{{app}}/api/customers/1
+Accept: application/json
+
+### Kunde nicht vorhanden — 404 (nur wenn ExceptionMapper implementiert!)
+GET {{host}}/{{app}}/api/customers/9999
+Accept: application/json
+
+### Neuer Kunde — 201
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Fritz Mustermann",
+  "email": "fritz@example.com",
+  "phone": "+43 664 9999999",
+  "company": "TestAG"
+}
+
+### Duplikat Email — 409 (nur wenn ExceptionMapper implementiert!)
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Anna Doppelt",
+  "email": "anna@example.com",
+  "phone": "+43 664 1111111",
+  "company": "TestAG"
+}
+
+### Ungueltige Telefonnummer — 400 (nur wenn @Pattern im Model gesetzt!)
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Bad Phone",
+  "email": "badphone@example.com",
+  "phone": "12345"
+}
+
+### Leerer Name — 400
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "test@example.com"
+}
+
+### Ungueltige Email — 400
+POST {{host}}/{{app}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Bad Email",
+  "email": "not-an-email"
+}
+
+### Kunde aktualisieren
+PUT {{host}}/{{app}}/api/customers/1
+Content-Type: application/json
+
+{
+  "name": "Anna Meier-Schmidt",
+  "email": "anna.updated@example.com",
+  "company": "CGS IT Solutions"
+}
+
+### Kunde loeschen — 204
+DELETE {{host}}/{{app}}/api/customers/5
+
+### Nochmal loeschen — 404
+DELETE {{host}}/{{app}}/api/customers/5
