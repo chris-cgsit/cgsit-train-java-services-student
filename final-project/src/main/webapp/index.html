@@ -5,35 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Abschlussprojekt — Customer API</title>
     <style>
-        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 650px; margin: 60px auto; padding: 0 20px; color: #2c3e50; }
         h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+        h3 { margin-top: 20px; color: #1a1a2e; }
         a { color: #0f3460; }
-        li { margin: 8px 0; }
+        li { margin: 6px 0; }
         code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
-        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 20px; font-size: 0.85em; }
+        .info { background: #f0f7ff; border-left: 4px solid #0f3460; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
         .warn { background: #fff8f0; border-left: 4px solid #e94560; padding: 12px 16px; margin-top: 15px; font-size: 0.85em; }
+        .todo { background: #fff0f0; border-left: 4px solid #c0392b; padding: 12px 16px; margin-top: 10px; font-size: 0.85em; }
+        .done { background: #f0fff0; border-left: 4px solid #27ae60; padding: 12px 16px; margin-top: 10px; font-size: 0.85em; }
         .footer { margin-top: 30px; font-size: 0.75em; color: #999; }
+        ol li { margin: 10px 0; }
     </style>
 </head>
 <body>
     <h1>Abschlussprojekt &mdash; Customer API</h1>
     <p>REST API mit Bean Validation, Jackson, OpenAPI, Error Handling, Testing.</p>
+    <p><strong>Zeit:</strong> 90 Minuten</p>
+
     <ul>
         <li><a href="api/customers">GET /api/customers</a> &mdash; Alle Kunden</li>
         <li><a href="swagger-ui.html">Swagger UI</a> &mdash; Interaktive API-Dokumentation</li>
         <li><a href="/openapi?format=JSON">OpenAPI Spec</a></li>
     </ul>
-    <div class="warn">
-        <strong>TODO:</strong>
+
+    <h3>Aufgaben (4 TODOs)</h3>
+
+    <div class="todo">
+        <strong>TODO 1: Bean Validation &mdash; <code>model/Customer.java</code></strong>
         <ul style="margin: 5px 0;">
-            <li><code>ServiceExceptionMapper</code> implementieren (sonst 500 statt 404/409)</li>
-            <li><code>CustomerResourceIT</code> REST-assured Tests implementieren</li>
+            <li>Feld <code>phone</code> hat noch keine Validation</li>
+            <li><code>@NotBlank</code> hinzuf&uuml;gen (Pflichtfeld)</li>
+            <li><code>@Pattern(regexp = "...")</code> hinzuf&uuml;gen</li>
+            <li>Erlaubte Formate: <code>+43 664 1234567</code>, <code>+49 170 9876543</code></li>
+            <li>Regex-Tipp: <code>\\+\\d{1,3}\\s\\d{2,4}\\s\\d{5,10}</code></li>
         </ul>
     </div>
-    <div class="info">
-        <strong>Fertig:</strong> Customer, CustomerStore, CustomerService, CustomerResource,
-        Swagger UI, Mockito Unit Tests, IntelliJ HTTP Tests.
+
+    <div class="todo">
+        <strong>TODO 2: REST Resource &mdash; <code>resource/CustomerResource.java</code></strong>
+        <ul style="margin: 5px 0;">
+            <li><code>GET /api/customers/{id}</code> &mdash; Einzelner Kunde</li>
+            <li><code>POST /api/customers</code> &mdash; Neuer Kunde (mit <code>@Valid</code>!)</li>
+            <li><code>PUT /api/customers/{id}</code> &mdash; Kunde aktualisieren</li>
+            <li><code>DELETE /api/customers/{id}</code> &mdash; Kunde l&ouml;schen</li>
+            <li>Nur <code>GET all</code> ist fertig &mdash; Rest als TODO-Kommentare mit Hinweisen</li>
+        </ul>
     </div>
+
+    <div class="todo">
+        <strong>TODO 3: ExceptionMapper &mdash; <code>mapper/ServiceExceptionMapper.java</code></strong>
+        <ul style="margin: 5px 0;">
+            <li><code>@Provider</code> Annotation hinzuf&uuml;gen</li>
+            <li><code>toResponse()</code> implementieren: Status + JSON Error Body</li>
+            <li>Ohne Mapper: 500 statt 404/409!</li>
+            <li>Erwartetes Format: <code>{"status": 404, "error": "Customer not found"}</code></li>
+            <li>Referenz: <code>05-error-handling-demo</code></li>
+        </ul>
+    </div>
+
+    <div class="todo">
+        <strong>TODO 4: REST-assured Tests &mdash; <code>integration/CustomerResourceIT.java</code></strong>
+        <ul style="margin: 5px 0;">
+            <li>11 Tests mit TODO-Markierung</li>
+            <li>GET by ID, POST mit JSON, POST mit Java-Objekt</li>
+            <li>Validation: leerer Name (400), ung&uuml;ltige Email (400), ung&uuml;ltige Telefonnummer (400)</li>
+            <li>Duplicate Email (409)</li>
+            <li>Full CRUD Workflow: POST &rarr; GET &rarr; PUT &rarr; DELETE &rarr; GET 404</li>
+            <li>Full Response: validate + extract + Headers ausgeben</li>
+        </ul>
+    </div>
+
+    <h3>Bewertungskriterien</h3>
+    <ol>
+        <li><code>@Pattern</code> auf phone &mdash; ung&uuml;ltige Telefonnummer ergibt 400</li>
+        <li>Alle 4 Resource-Endpoints funktionieren (GET, POST, PUT, DELETE)</li>
+        <li>ExceptionMapper liefert 404/409 mit JSON Body (nicht 500)</li>
+        <li>Mindestens 5 REST-assured Tests gr&uuml;n</li>
+        <li>CRUD Workflow Test funktioniert</li>
+        <li>Swagger UI zeigt die API korrekt an</li>
+    </ol>
+
+    <h3>Was ist bereits fertig</h3>
+    <div class="done">
+        <ul style="margin: 5px 0;">
+            <li><code>Customer</code> Record (Bean Validation + Jackson + OpenAPI)</li>
+            <li><code>CustomerStore</code> In-Memory Repository (5 Beispielkunden)</li>
+            <li><code>CustomerService</code> Business-Logik (Duplicate-Check, Not-Found)</li>
+            <li><code>ServiceException</code>, <code>CustomerNotFoundException</code>, <code>DuplicateCustomerException</code></li>
+            <li><code>CustomerServiceTest</code> Mockito Unit Tests (8 Tests, alle gr&uuml;n)</li>
+            <li>Swagger UI, IntelliJ HTTP Tests (<code>api-tests.http</code>)</li>
+        </ul>
+    </div>
+
+    <div class="info">
+        <strong>Starten:</strong> <code>mvn clean package wildfly:dev</code>
+        (ben&ouml;tigt <code>standalone-microprofile.xml</code> f&uuml;r Swagger/OpenAPI)
+    </div>
+
     <div class="footer">CGS IT Solutions GmbH &mdash; Java Services Training &mdash; Abschlussprojekt</div>
 </body>
 </html>
