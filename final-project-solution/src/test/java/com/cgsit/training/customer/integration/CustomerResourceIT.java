@@ -85,17 +85,28 @@ class CustomerResourceIT {
     void shouldCreateAndExtractAsObject() {
         Customer input = new Customer(null, "Typed Test", "typed@example.com", "+43 660 1112233", "TypedCorp", null);
 
-        Customer created = given()
+        // Note: .as(Customer.class) deserializes the response, but @JsonProperty(READ_ONLY)
+        // on the 'id' field means Jackson ignores 'id' during deserialization.
+        // → Use .extract().response() and check id via JSON path instead.
+        Response response = given()
             .contentType(ContentType.JSON)
             .body(input)
         .when()
             .post("/customers")
         .then()
             .statusCode(201)
-            .extract()
-            .as(Customer.class);
+            .body("id", notNullValue())
+            .body("name", equalTo("Typed Test"))
+            .body("email", equalTo("typed@example.com"))
+        .extract()
+            .response();
 
-        assertNotNull(created.id());
+        // id via JSON path (works despite READ_ONLY)
+        Integer id = response.path("id");
+        assertNotNull(id, "Server should assign an ID");
+
+        // Other fields via deserialized object
+        Customer created = response.as(Customer.class);
         assertEquals("Typed Test", created.name());
         assertEquals("typed@example.com", created.email());
     }
@@ -165,19 +176,18 @@ class CustomerResourceIT {
     @Order(20)
     @DisplayName("Full CRUD workflow — create, read, update, delete, verify")
     void crudWorkflow() {
-        // CREATE
+        // CREATE — extract id via path() because @JsonProperty(READ_ONLY) blocks deserialization
         Customer input = new Customer(null, "CRUD Test", "crud@example.com", "+43 664 5555555", "CrudCorp", null);
-        Customer created = given()
+        Integer id = given()
             .contentType(ContentType.JSON)
             .body(input)
         .when()
             .post("/customers")
         .then()
             .statusCode(201)
+            .body("name", equalTo("CRUD Test"))
             .extract()
-            .as(Customer.class);
-
-        Long id = created.id();
+            .path("id");
 
         // READ
         given()
@@ -231,8 +241,12 @@ class CustomerResourceIT {
         .extract()
             .response();
 
+        // id via path (READ_ONLY blocks deserialization)
+        Integer id = response.path("id");
+        assertNotNull(id, "Server should assign an ID");
+
         Customer created = response.as(Customer.class);
-        assertNotNull(created.id());
+        assertEquals("Response Test", created.name());
 
         System.out.println("=== Response Headers ===");
         response.headers().asList().forEach(h ->
