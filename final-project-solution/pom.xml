@@ -108,7 +108,7 @@
     </dependencies>
 
     <build>
-        <finalName>final-project</finalName>
+        <finalName>final-project-solution</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -132,7 +132,7 @@
                 <configuration>
                     <jboss-home>${wildfly.home}</jboss-home>
                     <server-config>standalone-microprofile.xml</server-config>
-                    <dev-webapp-directory>target/final-project</dev-webapp-directory>
+                    <dev-webapp-directory>target/final-project-solution</dev-webapp-directory>
                 </configuration>
             </plugin>
         </plugins>

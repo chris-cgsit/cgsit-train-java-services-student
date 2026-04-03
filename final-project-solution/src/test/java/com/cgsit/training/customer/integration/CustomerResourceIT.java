@@ -20,7 +20,7 @@ class CustomerResourceIT {
     @BeforeAll
     static void setup() {
         RestAssured.baseURI = "http://localhost:8080";
-        RestAssured.basePath = "/final-project/api";
+        RestAssured.basePath = "/final-project-solution/api";
     }
 
     @Test
