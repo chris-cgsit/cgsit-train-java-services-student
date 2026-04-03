@@ -1,0 +1,24 @@
+# ============================================================
+# WildFly CLI Script: Datasource — DEV (H2 In-Memory)
+# ============================================================
+#
+# H2 is bundled with WildFly — no driver installation needed.
+# Data is lost on server restart (in-memory).
+#
+# JNDI: java:jboss/datasources/TrainingDS
+#
+# ============================================================
+
+# H2 In-Memory Datasource for development
+/subsystem=datasources/data-source=TrainingDS:add( \
+    jndi-name=java:jboss/datasources/TrainingDS, \
+    connection-url=jdbc:h2:mem:training;DB_CLOSE_DELAY=-1, \
+    driver-name=h2, \
+    user-name=sa, \
+    password=sa, \
+    min-pool-size=2, \
+    max-pool-size=10, \
+    pool-use-strict-min=false)
+
+# Verify
+/subsystem=datasources/data-source=TrainingDS:test-connection-in-pool()

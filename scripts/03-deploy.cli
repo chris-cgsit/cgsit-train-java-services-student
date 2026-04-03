@@ -1,0 +1,31 @@
+# ============================================================
+# WildFly CLI Script: Deployment
+# ============================================================
+#
+# Deployt ein WAR auf einen laufenden WildFly Server.
+#
+# Usage (WildFly muss laufen!):
+#   jboss-cli.bat -c --file=scripts/wildfly/03-deploy.cli
+#
+# Oder manuell:
+#   jboss-cli.bat -c
+#   deploy target/myapp.war --force
+#
+# ============================================================
+
+# Aktuellen Status anzeigen
+:read-attribute(name=server-state)
+
+# Alle bestehenden Deployments auflisten
+ls /deployment
+
+# WAR deployen (--force = redeploy wenn bereits vorhanden)
+deploy final-project/starter/target/final-project.war --force
+
+# Deployment prüfen
+/deployment=final-project.war:read-attribute(name=status)
+
+echo ""
+echo "=== Deployment complete ==="
+echo "Application: http://localhost:8080/final-project/"
+echo ""

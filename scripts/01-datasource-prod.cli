@@ -1,0 +1,39 @@
+# ============================================================
+# WildFly CLI Script: Datasource — PROD (PostgreSQL)
+# ============================================================
+#
+# Prerequisites:
+#   1. PostgreSQL JDBC driver must be installed as WildFly module:
+#      jboss-cli.bat --connect
+#      module add --name=org.postgresql \
+#          --resources=postgresql-42.7.4.jar \
+#          --dependencies=javax.api,javax.transaction.api
+#
+#   2. Register the driver:
+#      /subsystem=datasources/jdbc-driver=postgresql:add( \
+#          driver-name=postgresql, \
+#          driver-module-name=org.postgresql, \
+#          driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+#
+# Connection details via environment variables:
+#   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+#
+# JNDI: java:jboss/datasources/TrainingDS
+#
+# ============================================================
+
+# PostgreSQL Datasource with connection pool
+/subsystem=datasources/data-source=TrainingDS:add( \
+    jndi-name=java:jboss/datasources/TrainingDS, \
+    connection-url=jdbc:postgresql://${env.DB_HOST:localhost}:${env.DB_PORT:5432}/${env.DB_NAME:training}, \
+    driver-name=postgresql, \
+    user-name=${env.DB_USER:admin}, \
+    password=${env.DB_PASSWORD:secret}, \
+    min-pool-size=5, \
+    max-pool-size=30, \
+    pool-use-strict-min=true, \
+    pool-prefill=true, \
+    valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker, \
+    exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter, \
+    background-validation=true, \
+    background-validation-millis=30000)

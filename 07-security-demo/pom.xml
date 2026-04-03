@@ -11,6 +11,28 @@
 
     <name>Day 4 — REST Security with Elytron</name>
 
+    <url>https://www.cgs.at</url>
+
+    <organization>
+        <name>CGS IT Solutions GmbH</name>
+        <url>https://www.cgs.at</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Mag. Christian Schaefer</name>
+            <organization>CGS IT Solutions GmbH</organization>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>CC BY-NC 4.0</name>
+            <url>https://creativecommons.org/licenses/by-nc/4.0/</url>
+            <comments>Free for non-commercial use. Attribution required.</comments>
+        </license>
+    </licenses>
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>

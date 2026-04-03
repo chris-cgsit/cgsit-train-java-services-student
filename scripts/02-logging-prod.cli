@@ -1,0 +1,31 @@
+# ============================================================
+# WildFly CLI Script: Logging — PROD
+# ============================================================
+#
+# Minimal logging for production:
+#   - Application code: INFO
+#   - Hibernate: WARN only
+#   - Console: WARN
+#   - File handler: daily rotation, 30 days retention
+#
+# ============================================================
+
+# Application packages: INFO (no DEBUG in prod)
+/subsystem=logging/logger=com.cgsit.training:write-attribute(name=level, value=INFO)
+
+# Hibernate: WARN only
+/subsystem=logging/logger=org.hibernate:add(level=WARN)
+
+# Console: WARN (reduce noise in container logs)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=WARN)
+
+# File handler: daily rotating log
+/subsystem=logging/periodic-rotating-file-handler=APP-FILE:add( \
+    file={path=app.log, relative-to=jboss.server.log.dir}, \
+    suffix=.yyyy-MM-dd, \
+    named-formatter=PATTERN, \
+    append=true)
+
+# Add file handler to root logger
+/subsystem=logging/root-logger=ROOT:add-handler(name=APP-FILE)
+/subsystem=logging/root-logger=ROOT:write-attribute(name=level, value=INFO)

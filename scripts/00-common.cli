@@ -1,0 +1,39 @@
+# ============================================================
+# WildFly CLI Script: Common Configuration
+# ============================================================
+#
+# Base configuration applied to ALL stages (dev, test, prod).
+# Extends standalone.xml with additional subsystems and settings.
+#
+# Usage:
+#   jboss-cli.bat --file=scripts/wildfly/00-common.cli
+#
+# Or offline (server does not need to run):
+#   jboss-cli.bat --file=scripts/wildfly/setup-dev.cli
+#
+# ============================================================
+
+# --- MicroProfile Subsystems ---
+# Add MicroProfile Config (like in standalone-microprofile.xml)
+# Allows @ConfigProperty injection from properties, env vars, etc.
+#
+# Note: These extensions must be loaded before the subsystems can be added.
+
+# MicroProfile Config
+/extension=org.wildfly.extension.microprofile.config-smallrye:add()
+/subsystem=microprofile-config-smallrye:add()
+
+# MicroProfile Health (provides /health endpoint)
+/extension=org.wildfly.extension.microprofile.health-smallrye:add()
+/subsystem=microprofile-health-smallrye:add()
+
+# MicroProfile OpenAPI (provides /openapi endpoint for Swagger UI)
+/extension=org.wildfly.extension.microprofile.openapi-smallrye:add()
+/subsystem=microprofile-openapi-smallrye:add()
+
+# --- Logging: Application Logger ---
+# Set log level for our application packages
+/subsystem=logging/logger=com.cgsit.training:add(level=DEBUG)
+
+# --- Console Handler: show timestamps ---
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=named-formatter, value=COLOR-PATTERN)

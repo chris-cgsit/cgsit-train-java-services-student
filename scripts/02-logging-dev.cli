@@ -1,0 +1,29 @@
+# ============================================================
+# WildFly CLI Script: Logging — DEV
+# ============================================================
+#
+# Verbose logging for development:
+#   - Application code: DEBUG
+#   - Hibernate SQL: show generated SQL
+#   - RESTEasy: DEBUG for request/response
+#   - Console: DEBUG level
+#
+# ============================================================
+
+# Application packages
+/subsystem=logging/logger=com.cgsit.training:write-attribute(name=level, value=DEBUG)
+
+# Hibernate: show SQL queries
+/subsystem=logging/logger=org.hibernate.SQL:add(level=DEBUG)
+
+# Hibernate: show bind parameters
+/subsystem=logging/logger=org.hibernate.type.descriptor.sql.BasicBinder:add(level=TRACE)
+
+# RESTEasy
+/subsystem=logging/logger=org.jboss.resteasy:add(level=DEBUG)
+
+# Console handler: show DEBUG
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
+
+# Root logger: INFO (catches everything else)
+/subsystem=logging/root-logger=ROOT:write-attribute(name=level, value=INFO)
